@@ -1,0 +1,155 @@
+<%- include("../partials/adminLayoutStart", {
+  pageTitle,
+  pageSubTitle
+}) %>
+
+<div class="space-y-6">
+
+  <!-- Filter -->
+  <form method="GET" class="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row md:items-end gap-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-600 mb-1">
+        From
+      </label>
+      <input
+        type="date"
+        name="from"
+        value="<%= from %>"
+        class="border border-gray-300 rounded px-3 py-2"
+      >
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-600 mb-1">
+        To
+      </label>
+      <input
+        type="date"
+        name="to"
+        value="<%= to %>"
+        class="border border-gray-300 rounded px-3 py-2"
+      >
+    </div>
+
+    <div>
+      <button
+        class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800">
+        Apply
+      </button>
+    </div>
+
+    <div class="ml-auto text-xs text-gray-500">
+      Showing data between <strong><%= from %></strong> and <strong><%= to %></strong>
+    </div>
+  </form>
+
+  <!-- Summary cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+    <div class="bg-white rounded-lg shadow p-4">
+      <div class="text-sm text-gray-500 uppercase">Total Orders</div>
+      <div class="text-3xl font-bold mt-2"><%= totalOrders || 0 %></div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-4">
+      <div class="text-sm text-gray-500 uppercase">Total Revenue</div>
+      <div class="text-3xl font-bold mt-2">
+        $ <%= Number(totalRevenue || 0).toFixed(2) %>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-4">
+      <div class="text-sm text-gray-500 uppercase">Average Order</div>
+      <div class="text-3xl font-bold mt-2">
+        $ <%= totalOrders ? (totalRevenue / totalOrders).toFixed(2) : "0.00" %>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Daily breakdown + Top customers -->
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+    <!-- Daily table -->
+    <div class="bg-white rounded-lg shadow p-4 overflow-x-auto">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-semibold text-gray-800">Daily Sales</h2>
+        <span class="text-xs text-gray-500">
+          Grouped by order date
+        </span>
+      </div>
+
+      <% if (!dailyRows.length) { %>
+        <div class="text-sm text-gray-500 py-4">
+          No orders in this period.
+        </div>
+      <% } else { %>
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class="bg-gray-900 text-white">
+              <th class="text-left px-3 py-2">Date</th>
+              <th class="text-left px-3 py-2">Orders</th>
+              <th class="text-left px-3 py-2">Revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% dailyRows.forEach(row => { %>
+              <tr class="border-b last:border-0">
+                <td class="px-3 py-2">
+                  <%= row.date %>
+                </td>
+                <td class="px-3 py-2">
+                  <%= row.orderCount %>
+                </td>
+                <td class="px-3 py-2">
+                  $ <%= Number(row.totalAmount || 0).toFixed(2) %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+
+    <!-- Top customers -->
+    <div class="bg-white rounded-lg shadow p-4">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-semibold text-gray-800">Top Customers</h2>
+        <span class="text-xs text-gray-500">By revenue in this period</span>
+      </div>
+
+      <% if (!topCustomers.length) { %>
+        <div class="text-sm text-gray-500 py-4">
+          No customer data for this period.
+        </div>
+      <% } else { %>
+        <div class="space-y-2 text-sm">
+          <% topCustomers.forEach((c, idx) => { %>
+            <div class="flex items-center justify-between border rounded px-3 py-2">
+              <div>
+                <div class="font-semibold">
+                  <%= idx + 1 %>. <%= c.name %>
+                </div>
+                <div class="text-xs text-gray-500">
+                  <%= c.phone || "" %>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-bold">
+                  $ <%= c.totalAmount.toFixed(2) %>
+                </div>
+                <div class="text-xs text-gray-500">
+                  <%= c.orderCount %> orders
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+
+  </div>
+
+</div>
+
+<%- include("../partials/adminLayoutEnd") %>

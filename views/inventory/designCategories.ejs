@@ -1,0 +1,158 @@
+<%- include("../partials/adminLayoutStart", { pageTitle, pageSubTitle }) %>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+  <!-- Add Design Form -->
+  <div class="bg-white rounded-lg shadow p-5 space-y-4">
+    <h2 class="text-lg font-semibold text-gray-800">Add Design</h2>
+
+    <form
+      action="/inventory/design-categories/create"
+      method="POST"
+      enctype="multipart/form-data"
+      class="space-y-4"
+    >
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">
+          Design Image
+        </label>
+        <input
+          type="file"
+          name="image"
+          accept="image/*"
+          class="block w-full text-sm text-gray-600
+                 file:mr-4 file:py-2 file:px-4
+                 file:rounded-lg file:border-0
+                 file:text-sm file:font-semibold
+                 file:bg-gray-100 file:text-gray-700
+                 hover:file:bg-gray-200
+                 border border-gray-300 rounded-lg"
+        />
+        <p class="mt-1 text-xs text-gray-400">PNG/JPG recommended</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">
+          Design Name *
+        </label>
+        <input
+          name="name"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2
+                 focus:outline-none focus:ring-2 focus:ring-gray-800"
+          placeholder="Blazer, Tuxedo, Evening Dress..."
+          required
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">
+          Description
+        </label>
+        <textarea
+          name="description"
+          rows="3"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2
+                 focus:outline-none focus:ring-2 focus:ring-gray-800 resize-none"
+          placeholder="Short description of this design category"
+        ></textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">
+          Notes / Special details
+        </label>
+        <textarea
+          name="notes"
+          rows="3"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2
+                 focus:outline-none focus:ring-2 focus:ring-gray-800 resize-none"
+        ></textarea>
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-gray-900 text-white py-2 rounded-lg
+               hover:bg-gray-800 transition font-medium"
+      >
+        Save Design
+      </button>
+    </form>
+  </div>
+
+  <!-- Design Gallery -->
+  <div class="lg:col-span-2">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h2 class="text-lg font-bold">Design Gallery</h2>
+        <p class="text-sm text-gray-500">Browse your design categories</p>
+      </div>
+
+      <form method="post" class="flex gap-2">
+        <input
+          name="q"
+          value="<%= q || '' %>"
+          class="border rounded px-3 py-2 text-sm"
+          placeholder="Search by design name"
+        />
+        <button
+          class="bg-gray-900 text-white rounded px-4 py-2 hover:bg-gray-800 text-sm"
+        >
+          Search
+        </button>
+      </form>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+      <% if (!designs.length) { %>
+        <div class="col-span-full bg-white rounded-lg p-4 text-gray-500">
+          No design categories yet.
+        </div>
+      <% } %>
+
+      <% designs.forEach(d => { %>
+        <div class="bg-white rounded-lg shadow overflow-hidden flex flex-col">
+          <div class="aspect-[4/3] bg-gray-100">
+            <% if (d.imagePath) { %>
+              <img src="<%= d.imagePath %>" alt="<%= d.name %>"
+                   class="w-full h-full object-cover">
+            <% } else { %>
+              <div class="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                No Image
+              </div>
+            <% } %>
+          </div>
+
+          <div class="p-4 flex-1 flex flex-col">
+            <div class="font-semibold text-gray-900 mb-1"><%= d.name %></div>
+            <% if (d.description) { %>
+              <div class="text-sm text-gray-600 mb-2 line-clamp-3">
+                <%= d.description %>
+              </div>
+            <% } %>
+            <% if (d.notes) { %>
+              <div class="text-xs text-gray-500 mb-2">
+                <span class="font-semibold">Notes:</span> <%= d.notes %>
+              </div>
+            <% } %>
+
+            <div class="mt-auto pt-3 flex justify-end">
+              <form
+                action="/inventory/design-categories/<%= d.id %>/delete"
+                method="POST"
+                onsubmit="return confirm('Delete this design?');"
+              >
+                <button
+                  class="px-3 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700"
+                >
+                  Delete
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+
+<%- include("../partials/adminLayoutEnd") %>

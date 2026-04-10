@@ -1,0 +1,185 @@
+<%- include("../partials/adminLayoutStart", { pageTitle, pageSubTitle }) %>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+  <!-- Form -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-lg font-bold mb-4">Create Appointment</h2>
+
+    <form method="POST" action="/appointments/create" class="space-y-4">
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Customer Name *</label>
+       <div>
+ 
+
+  <input
+    name="customerName"
+    list="customerList"
+    placeholder="Select or type new customer"
+    class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-gray-900 focus:outline-none"
+    required
+  />
+
+  <datalist id="customerList">
+    <% customers.forEach(c => { %>
+      <option value="<%= c.name %>"></option>
+    <% }) %>
+  </datalist>
+
+  <p class="text-xs text-gray-500 mt-1">
+    You can select existing or type new customer name
+  </p>
+</div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Appointment Date & Time *</label>
+        <input type="datetime-local" name="appointmentAt"
+               class="w-full border rounded px-3 py-2" required />
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input name="email" id="email" type="email" class="w-full border rounded px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">WhatsApp</label>
+         <input name="whatsapp" id="whatsapp" class="w-full border rounded px-3 py-2" />
+        </div>
+      </div>
+
+      <!-- Hotel pickup -->
+      <div>
+        <label class="block text-sm font-medium mb-2">Hotel Pickup?</label>
+        <div class="flex items-center gap-6">
+          <label class="flex items-center gap-2">
+            <input type="radio" name="hotelPickup" value="no" checked class="accent-gray-900"
+                   onchange="toggleHotel(false)" />
+            <span>No</span>
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="radio" name="hotelPickup" value="yes" class="accent-gray-900"
+                   onchange="toggleHotel(true)" />
+            <span>Yes</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Hotel fields -->
+      <div id="hotelBox" class="hidden space-y-3 border rounded p-3 bg-gray-50">
+        <div>
+          <label class="block text-sm font-medium mb-1">Hotel Name</label>
+          <input name="hotelName" class="w-full border rounded px-3 py-2" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Room No</label>
+          <input name="roomNo" class="w-full border rounded px-3 py-2" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Hotel Address</label>
+          <textarea name="hotelAddress" rows="2" class="w-full border rounded px-3 py-2"></textarea>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Notify before</label>
+        <select name="remindBeforeMinutes" class="w-full border rounded px-3 py-2">
+          <option value="60">1 hour before</option>
+          <option value="30">30 minutes before</option>
+          <option value="15">15 minutes before</option>
+          <option value="0">No reminder</option>
+        </select>
+        <p class="text-xs text-gray-500 mt-1">We store this setting now. (Real WhatsApp/email reminders can be added later.)</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Notes</label>
+        <textarea name="notes" rows="4" class="w-full border rounded px-3 py-2"></textarea>
+      </div>
+
+      <button class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800 w-full">
+        Save
+      </button>
+    </form>
+  </div>
+
+  <!-- List -->
+  <div class="lg:col-span-2 bg-white rounded-lg shadow overflow-hidden">
+    <div class="p-6 border-b">
+      <h2 class="text-lg font-bold">Appointments List</h2>
+      <p class="text-sm text-gray-500">Recent appointments</p>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full">
+        <thead class="bg-gray-900 text-white">
+          <tr>
+            <th class="text-left px-4 py-3 text-sm">Customer</th>
+            <th class="text-left px-4 py-3 text-sm">Date</th>
+            <th class="text-left px-4 py-3 text-sm">Pickup</th>
+            <th class="text-left px-4 py-3 text-sm">WhatsApp</th>
+            <th class="text-left px-4 py-3 text-sm">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (appointments.length === 0) { %>
+            <tr>
+              <td class="px-4 py-4 text-sm text-gray-500" colspan="5">No appointments yet.</td>
+            </tr>
+          <% } %>
+
+          <% appointments.forEach(a => { %>
+            <tr class="border-t hover:bg-gray-50">
+              <td class="px-4 py-3 text-sm font-medium"><%= a.Customer ? a.Customer.name : "-" %></td>
+              <td class="px-4 py-3 text-sm"><%= new Date(a.appointmentAt).toLocaleString() %></td>
+              <td class="px-4 py-3 text-sm"><%= a.hotelPickup ? "Yes" : "No" %></td>
+              <td class="px-4 py-3 text-sm"><%= a.whatsapp || "-" %></td>
+              <td class="px-4 py-3 text-sm">
+                <form method="POST" action="/appointments/<%= a.id %>/delete"
+                      onsubmit="return confirm('Delete this appointment?');">
+                  <button class="bg-red-600 text-white px-3 py-1.5 rounded hover:bg-red-700">
+                    Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleHotel(show) {
+    const box = document.getElementById("hotelBox");
+    if (show) box.classList.remove("hidden");
+    else box.classList.add("hidden");
+  }
+</script>
+<script>
+  const customers = <%- JSON.stringify(customers) %>;
+
+  const nameInput = document.getElementById("customerName");
+  const emailInput = document.getElementById("email");
+  const whatsappInput = document.getElementById("whatsapp");
+
+  function autofillCustomer() {
+    const typed = (nameInput.value || "").trim().toLowerCase();
+    const found = customers.find(c => (c.name || "").toLowerCase() === typed);
+
+    if (found) {
+      if (!emailInput.value) emailInput.value = found.email || "";
+      if (!whatsappInput.value) whatsappInput.value = found.phone || ""; // using phone as whatsapp
+    }
+  }
+
+  nameInput.addEventListener("change", autofillCustomer);
+  nameInput.addEventListener("blur", autofillCustomer);
+</script>
+
+<%- include("../partials/adminLayoutEnd") %>

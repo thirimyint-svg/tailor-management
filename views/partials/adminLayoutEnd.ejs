@@ -1,0 +1,29 @@
+<script>
+  var sidebar = document.getElementById("sidebar");
+  var overlay = document.getElementById("overlay");
+  var menuBtn = document.getElementById("menuBtn");
+
+  function openSidebar() {
+    if (!sidebar || !overlay) return;
+    sidebar.classList.remove("-translate-x-full");
+    overlay.classList.remove("hidden");
+    overlay.classList.remove("pointer-events-none");
+  }
+
+  function closeSidebar() {
+    if (!sidebar || !overlay) return;
+    sidebar.classList.add("-translate-x-full");
+    overlay.classList.add("hidden");
+    overlay.classList.add("pointer-events-none");
+  }
+
+  if (menuBtn) menuBtn.addEventListener("click", openSidebar);
+  if (overlay) overlay.addEventListener("click", closeSidebar);
+
+  function toggleMenu(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle("hidden");
+  }
+  window.toggleMenu = toggleMenu;
+</script>

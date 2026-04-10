@@ -1,0 +1,89 @@
+<%- include("../partials/adminLayoutStart", { pageTitle, pageSubTitle }) %>
+
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+  <!-- Add Fabric Form -->
+  <div class="lg:col-span-1 bg-white rounded-lg shadow p-4">
+    <h2 class="font-semibold mb-3">Add Fabric</h2>
+
+    <!-- ✅ FORM START -->
+    <form
+      action="/inventory/fabrics"
+      method="POST"
+      enctype="multipart/form-data"
+      class="space-y-3"
+    >
+
+      <div>
+        <label class="text-sm text-gray-600">Fabric Image</label>
+        <input
+          type="file"
+          name="image"
+          accept="image/*"
+          class="w-full border rounded px-3 py-2"
+        />
+      </div>
+
+      <div>
+        <label class="text-sm text-gray-600">Title *</label>
+        <input
+          name="title"
+          required
+          class="w-full border rounded px-3 py-2"
+          placeholder="Tweed Blazer Fabric"
+        />
+      </div>
+
+      <div>
+        <label class="text-sm text-gray-600">Code *</label>
+        <input
+          name="code"
+          required
+          class="w-full border rounded px-3 py-2"
+          placeholder="BTW-101"
+        />
+      </div>
+
+      <div>
+        <label class="text-sm text-gray-600">Color</label>
+        <input
+          name="color"
+          class="w-full border rounded px-3 py-2"
+          placeholder="Blue"
+        />
+      </div>
+
+      <div>
+        <label class="text-sm text-gray-600">Stock Qty</label>
+        <input
+          name="stockQty"
+          type="number"
+          value="0"
+          class="w-full border rounded px-3 py-2"
+        />
+      </div>
+
+      <div>
+        <label class="text-sm text-gray-600">Notes</label>
+        <textarea
+          name="notes"
+          class="w-full border rounded px-3 py-2"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-gray-900 text-white rounded py-2 hover:bg-gray-800"
+      >
+        Save Fabric
+      </button>
+
+    </form>
+    <!-- ✅ FORM END -->
+
+  </div>
+
+</div>
+
+<%- include("../partials/adminLayoutEnd") %>

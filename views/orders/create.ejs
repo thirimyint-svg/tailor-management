@@ -1,0 +1,293 @@
+<%- include("../partials/adminLayoutStart", { pageTitle, pageSubTitle }) %>
+
+<form action="/orders/create" method="POST" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+  <!-- LEFT: Main order info -->
+  <div class="bg-white rounded-xl shadow p-5 space-y-4">
+    <h2 class="text-lg font-semibold text-gray-800 mb-2">Customer Order</h2>
+
+    <!-- Customer Name -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Name
+      </label>
+
+      <% if (typeof currentCustomer !== "undefined" && currentCustomer) { %>
+        <!-- when customer is logged in (user portal) -->
+        <input
+          type="hidden"
+          name="customerId"
+          value="<%= currentCustomer.id %>"
+        />
+        <input
+          type="text"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100"
+          value="<%= currentCustomer.name %>"
+          readonly
+        />
+        <p class="text-xs text-gray-500 mt-1">
+          Auto-filled from customer login.
+        </p>
+      <% } else { %>
+        <!-- admin selects customer -->
+        <select
+          name="customerId"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2"
+          required
+        >
+          <option value="">-- Select customer --</option>
+          <% (customers || []).forEach(c => { %>
+            <option value="<%= c.id %>"><%= c.name %> (<%= c.phone %>)</option>
+          <% }) %>
+        </select>
+      <% } %>
+    </div>
+
+    <!-- Type (Shirt / Jacket / Trouser/Suit) -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Type
+        <span class="text-xs text-gray-400">(drop down)</span>
+      </label>
+      <select
+        name="garmentType"
+        class="w-full border border-gray-300 rounded-lg px-3 py-2"
+        required
+      >
+        <option value="">-- Select type --</option>
+        <option value="shirt">Shirt</option>
+        <option value="jacket">Jacket</option>
+        <option value="trouser">Trouser</option>
+        <option value="suit">Suit</option>
+      </select>
+    </div>
+
+    <!-- Purpose -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Purpose
+      </label>
+      <select
+        name="purpose"
+        class="w-full border border-gray-300 rounded-lg px-3 py-2"
+      >
+        <option value="">-- Select purpose --</option>
+        <option value="party">Party</option>
+        <option value="business">Business</option>
+        <option value="casual">Casual</option>
+        <option value="wedding">Wedding</option>
+      </select>
+    </div>
+
+    <!-- Button Design -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Button Design
+      </label>
+      <select
+        name="buttonDesign"
+        class="w-full border border-gray-300 rounded-lg px-3 py-2"
+      >
+        <option value="">-- Select button design --</option>
+        <option value="plain">Plain</option>
+        <option value="contrast">Contrast</option>
+        <option value="covered">Covered</option>
+        <option value="hidden_placket">Hidden placket</option>
+      </select>
+    </div>
+
+    <!-- Measurements -->
+    <div>
+      <div class="flex items-center justify-between mb-1">
+        <label class="block text-sm font-medium text-gray-700">
+          Measurement <span class="text-xs text-gray-400">(inches / cm)</span>
+        </label>
+        <button
+          type="button"
+          id="openMeasurementHelp"
+          class="text-xs text-blue-600 hover:underline"
+        >
+          How to make measurement?
+        </button>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3">
+        <input
+          type="text"
+          name="measure1"
+          placeholder="Neck"
+          class="border border-gray-300 rounded-lg px-3 py-2"
+        />
+        <input
+          type="text"
+          name="measure2"
+          placeholder="Chest"
+          class="border border-gray-300 rounded-lg px-3 py-2"
+        />
+        <input
+          type="text"
+          name="measure3"
+          placeholder="Waist"
+          class="border border-gray-300 rounded-lg px-3 py-2"
+        />
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: Length + notes -->
+  <div class="bg-white rounded-xl shadow p-5 space-y-6">
+
+    <!-- Length options -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+        Length
+      </label>
+      <div class="flex flex-wrap gap-4">
+        <label class="inline-flex items-center gap-2">
+          <input type="radio" name="lengthType" value="short" class="border-gray-300">
+          <span>Short</span>
+        </label>
+
+        <label class="inline-flex items-center gap-2">
+          <input type="radio" name="lengthType" value="medium" class="border-gray-300">
+          <span>Medium</span>
+        </label>
+
+        <label class="inline-flex items-center gap-2">
+          <input type="radio" name="lengthType" value="long" class="border-gray-300">
+          <span>Long</span>
+        </label>
+
+        <label class="inline-flex items-center gap-2">
+          <input type="radio" name="lengthType" value="custom" class="border-gray-300">
+          <span>Uniform</span>
+          <input
+            type="text"
+            name="lengthCustom"
+            class="border border-gray-300 rounded-lg px-2 py-1 w-24"
+            placeholder="e.g. 36"
+          />
+        </label>
+      </div>
+    </div>
+
+    <!-- Length / measurement notes -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Length / Measurement Notes
+      </label>
+      <textarea
+        name="lengthNotes"
+        rows="4"
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 resize-none"
+        placeholder="e.g. below knee, full length, sleeve length, etc."
+      ></textarea>
+    </div>
+
+    <!-- General notes -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Notes
+      </label>
+      <textarea
+        name="notes"
+        rows="4"
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 resize-none"
+        placeholder="Any other details: fabric code, design reference, lining…"
+      ></textarea>
+    </div>
+
+    <div class="flex justify-end">
+      <button
+        type="submit"
+        class="px-6 py-2 rounded-lg bg-gray-900 text-white hover:bg-gray-800 font-medium"
+      >
+        Save Order
+      </button>
+    </div>
+
+  </div>
+</form>
+
+<!-- Measurement Help Modal -->
+<div
+  id="measurementHelpModal"
+  class="hidden fixed inset-0 bg-black/50 z-40 items-center justify-center"
+>
+  <div class="bg-white rounded-xl shadow-lg max-w-2xl w-full mx-4 p-5 relative">
+    <button
+      type="button"
+      id="closeMeasurementHelp"
+      class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+    >
+      ✕
+    </button>
+
+    <h3 class="text-lg font-semibold mb-3">
+      How to make measurement
+    </h3>
+
+    <p class="text-sm text-gray-600 mb-3">
+      Follow this guide to take accurate body measurements.
+    </p>
+
+    <div class="aspect-video bg-black/5 mb-4 flex items-center justify-center text-gray-400 text-sm">
+      <!-- replace with real YouTube iframe later -->
+      Video: how to measure (placeholder)
+    </div>
+
+    <table class="w-full text-sm border border-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="border border-gray-200 px-2 py-1 text-left">Measurement</th>
+          <th class="border border-gray-200 px-2 py-1 text-left">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="border border-gray-200 px-2 py-1">Neck</td>
+          <td class="border border-gray-200 px-2 py-1">Around the base of the neck</td>
+        </tr>
+        <tr>
+          <td class="border border-gray-200 px-2 py-1">Chest</td>
+          <td class="border border-gray-200 px-2 py-1">Fullest part of the chest</td>
+        </tr>
+        <tr>
+          <td class="border border-gray-200 px-2 py-1">Waist</td>
+          <td class="border border-gray-200 px-2 py-1">Natural waist line</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const openBtn = document.getElementById("openMeasurementHelp");
+    const modal = document.getElementById("measurementHelpModal");
+    const closeBtn = document.getElementById("closeMeasurementHelp");
+
+    if (openBtn && modal && closeBtn) {
+      openBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      });
+
+      closeBtn.addEventListener("click", function () {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      });
+
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) {
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+        }
+      });
+    }
+  });
+</script>
+
+<%- include("../partials/adminLayoutEnd") %>

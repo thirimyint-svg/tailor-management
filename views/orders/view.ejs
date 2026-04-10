@@ -1,0 +1,48 @@
+<%- include("../partials/adminLayoutStart", { pageTitle, pageSubTitle }) %>
+
+<div class="bg-white rounded-lg shadow p-6 space-y-6">
+
+  <div class="flex items-center justify-between">
+    <div>
+      <div class="text-sm text-gray-500">Order No</div>
+      <div class="text-2xl font-bold">#<%= order.id %></div>
+    </div>
+    <div>
+      <span class="px-3 py-1 text-sm rounded bg-yellow-100 text-yellow-700">
+        <%= order.status || "Pending" %>
+      </span>
+    </div>
+  </div>
+
+  <div class="border-t pt-4">
+    <h3 class="font-semibold text-gray-800 text-lg mb-2">Customer</h3>
+    <div class="text-gray-700 space-y-1">
+      <div><b>Name:</b> <%= order.Customer?.name %></div>
+      <div><b>Phone:</b> <%= order.Customer?.phone %></div>
+      <div><b>Email:</b> <%= order.Customer?.email || "-" %></div>
+    </div>
+  </div>
+
+  <div class="border-t pt-4">
+    <h3 class="font-semibold text-gray-800 text-lg mb-2">Order Info</h3>
+    <div class="text-gray-700 space-y-1">
+      <div><b>Order Date:</b> <%= new Date(order.createdAt).toLocaleDateString() %></div>
+      <div><b>Total Amount:</b> ₹ <%= (order.totalAmount || 0).toFixed(2) %></div>
+    </div>
+  </div>
+
+  <% if (order.notes) { %>
+  <div class="border-t pt-4">
+    <h3 class="font-semibold text-gray-800 text-lg mb-2">Notes</h3>
+    <div class="text-gray-700"><%= order.notes %></div>
+  </div>
+  <% } %>
+
+  <div class="pt-4">
+    <a href="/orders" class="px-4 py-2 border rounded hover:bg-gray-100">
+      Back to Orders
+    </a>
+  </div>
+</div>
+
+<%- include("../partials/adminLayoutEnd") %>

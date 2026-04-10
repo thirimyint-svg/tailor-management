@@ -1,0 +1,26 @@
+<%- include("../partials/adminLayoutStart", { pageTitle, pageSubTitle }) %>
+
+<div class="bg-white rounded-lg shadow p-6">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+      <div class="text-sm text-gray-500">Order No</div>
+      <div class="text-xl font-bold"><%= order.orderNo || ('#' + order.id) %></div>
+      <div class="text-sm text-gray-600 mt-1">
+        Status: <span class="font-semibold"><%= order.status || 'Pending' %></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <pre class="text-xs text-gray-500 bg-gray-50 p-3 rounded">
+      Debug JSON:
+      <%= JSON.stringify(order, null, 2) %>
+    </pre>
+  </div>
+
+  <div class="mt-6">
+    <a href="/orders" class="bg-gray-100 px-4 py-2 rounded hover:bg-gray-200">Back to Orders</a>
+  </div>
+</div>
+
+<%- include("../partials/adminLayoutEnd") %>

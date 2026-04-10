@@ -1,0 +1,284 @@
+<%- include("../partials/adminLayoutStart", { pageTitle, pageSubTitle }) %>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+  <!-- LEFT: Add Voucher -->
+  <div class="bg-white rounded-xl shadow p-5 space-y-4">
+    <h2 class="text-lg font-semibold text-gray-800">Add Voucher</h2>
+
+    <form
+      action="/vouchers/create"
+      method="POST"
+      enctype="multipart/form-data"
+      class="space-y-4"
+    >
+      <!-- Image -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">
+          Voucher Image
+        </label>
+        <input
+          type="file"
+          name="image"
+          class="block w-full text-sm text-gray-600
+                 file:mr-4 file:py-2 file:px-4
+                 file:rounded-lg file:border-0
+                 file:text-sm file:font-semibold
+                 file:bg-gray-100 file:text-gray-700
+                 hover:file:bg-gray-200
+                 border border-gray-300 rounded-lg"
+        />
+      </div>
+
+      <!-- Title -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Title *</label>
+        <input
+          name="title"
+          required
+          class="w-full border border-gray-300 rounded-lg px-3 py-2
+                 focus:outline-none focus:ring-2 focus:ring-gray-800"
+          placeholder="Chinese New Year Voucher"
+        />
+      </div>
+
+      <!-- Code -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Code *</label>
+        <input
+          name="code"
+          required
+          class="w-full border border-gray-300 rounded-lg px-3 py-2
+                 focus:outline-none focus:ring-2 focus:ring-gray-800"
+          placeholder="CNY2026"
+        />
+      </div>
+
+      <!-- Customer dropdown -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">
+          Customer (optional)
+        </label>
+        <select
+          name="customerId"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800"
+        >
+          <option value="">-- No Specific Customer --</option>
+          <% customers.forEach(c => { %>
+            <option value="<%= c.id %>"><%= c.name %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <!-- Type + Value -->
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Type</label>
+          <select
+            name="discountType"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2
+                   focus:outline-none focus:ring-2 focus:ring-gray-800"
+          >
+            <option value="amount">Amount ($)</option>
+            <option value="percent">Percent (%)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Value</label>
+          <input
+            type="number"
+            step="0.01"
+            name="discountValue"
+            value="0"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2
+                   focus:outline-none focus:ring-2 focus:ring-gray-800"
+          />
+        </div>
+      </div>
+
+      <!-- Min order -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">
+          Min Order Amount
+        </label>
+        <input
+          type="number"
+          step="0.01"
+          name="minOrderAmount"
+          value="0"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2
+                 focus:outline-none focus:ring-2 focus:ring-gray-800"
+        />
+      </div>
+
+      <!-- Dates -->
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">
+            Valid From
+          </label>
+          <input
+            type="date"
+            name="validFrom"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2
+                   focus:outline-none focus:ring-2 focus:ring-gray-800"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">
+            Valid To
+          </label>
+          <input
+            type="date"
+            name="validTo"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2
+                   focus:outline-none focus:ring-2 focus:ring-gray-800"
+          />
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">
+          Notes / Terms
+        </label>
+        <textarea
+          name="notes"
+          rows="3"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2
+                 focus:outline-none focus:ring-2 focus:ring-gray-800 resize-none"
+        ></textarea>
+      </div>
+
+      <!-- Save -->
+      <button
+        type="submit"
+        class="w-full bg-gray-900 text-white py-2 rounded-lg
+               hover:bg-gray-800 transition font-medium"
+      >
+        Save Voucher
+      </button>
+    </form>
+  </div>
+
+  <!-- RIGHT: Voucher List -->
+  <div class="lg:col-span-2 space-y-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-800">Voucher List</h2>
+        <p class="text-sm text-gray-500">
+          Search by voucher no, title or customer name
+        </p>
+      </div>
+
+      <form method="GET" class="flex gap-2">
+        <input
+          type="text"
+          name="q"
+          value="<%= q || '' %>"
+          placeholder="Search code / title / customer"
+          class="border border-gray-300 rounded-lg px-3 py-2 text-sm
+                 focus:outline-none focus:ring-2 focus:ring-gray-800"
+        />
+        <button
+          class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm
+                 hover:bg-gray-800"
+        >
+          Search
+        </button>
+      </form>
+    </div>
+
+    <!-- Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <% if (!vouchers.length) { %>
+        <div class="col-span-full bg-white rounded-lg p-4 text-gray-500">
+          No vouchers found.
+        </div>
+      <% } %>
+
+      <% vouchers.forEach(v => { %>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col">
+          <!-- image -->
+          <div class="h-28 bg-gray-100 flex items-center justify-center text-xs text-gray-400">
+            <% if (v.imagePath) { %>
+              <img src="<%= v.imagePath %>" class="h-full w-full object-cover" />
+            <% } else { %>
+              No image
+            <% } %>
+          </div>
+
+          <div class="p-4 flex-1 flex flex-col gap-1 text-sm">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="font-semibold text-gray-800"><%= v.title %></div>
+                <div class="text-xs text-gray-500">Code: <%= v.code %></div>
+                <% if (v.Customer) { %>
+                  <div class="text-xs text-gray-600 mt-1">
+                    Customer: <strong><%= v.Customer.name %></strong>
+                  </div>
+                <% } else { %>
+                  <div class="text-xs text-gray-400 mt-1">
+                    Customer: <em>Any customer</em>
+                  </div>
+                <% } %>
+              </div>
+
+              <span class="text-xs px-2 py-1 rounded
+                           <%= v.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-700' %>">
+                <%= v.isActive ? 'Active' : 'Inactive' %>
+              </span>
+            </div>
+
+            <div class="mt-2 text-xs text-gray-600 space-y-1">
+              <div>
+                Discount:
+                <% if (v.discountType === 'percent') { %>
+                  <%= v.discountValue %>% 
+                <% } else { %>
+                  $<%= Number(v.discountValue || 0).toFixed(2) %>
+                <% } %>
+              </div>
+              <div>Min order: $<%= Number(v.minOrderAmount || 0).toFixed(2) %></div>
+              <div>
+                Valid:
+                <% if (!v.validFrom && !v.validTo) { %>
+                  No expiry
+                <% } else { %>
+                  <%= v.validFrom || '...' %> – <%= v.validTo || '...' %>
+                <% } %>
+              </div>
+              <div>Used: No</div>
+              <% if (v.notes) { %>
+                <div class="text-gray-500 mt-1"><%= v.notes %></div>
+              <% } %>
+            </div>
+          </div>
+
+          <div class="px-4 pb-3 flex gap-2">
+            <form action="/vouchers/<%= v.id %>/toggle" method="POST" class="flex-1">
+              <button
+                class="w-full border rounded-lg py-2 text-sm
+                       hover:bg-gray-50"
+              >
+                <%= v.isActive ? 'Deactivate' : 'Activate' %>
+              </button>
+            </form>
+
+            <form action="/vouchers/<%= v.id %>/delete" method="POST" class="flex-1">
+              <button
+                class="w-full bg-red-600 text-white rounded-lg py-2 text-sm
+                       hover:bg-red-700"
+                onclick="return confirm('Delete this voucher?')"
+              >
+                Delete
+              </button>
+            </form>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+
+<%- include("../partials/adminLayoutEnd") %>

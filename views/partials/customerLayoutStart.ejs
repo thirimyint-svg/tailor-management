@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= pageTitle || "Customer" %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-gray-100">
+
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-900 text-white hidden lg:block">
+    <div class="p-4 border-b border-gray-800">
+      <div class="text-lg font-bold">👤 Customer</div>
+      <div class="text-xs text-gray-400"><%= user ? user.name : "" %></div>
+    </div>
+
+    <%
+      const current = (typeof currentUrl !== "undefined" && currentUrl) ? currentUrl : "";
+      const active = (p) => current.startsWith(p) ? "bg-gray-800" : "";
+      const link = (p) => `block px-4 py-2 rounded hover:bg-gray-800 ${active(p)}`;
+    %>
+
+    <nav class="p-3 space-y-1">
+      <a href="/user/dashboard" class="<%= link('/user/dashboard') %>">🏠 Dashboard</a>
+      <a href="/user/profile" class="<%= link('/user/profile') %>">👤 Profile</a>
+      <a href="/user/orders" class="<%= link('/user/orders') %>">🧾 Orders</a>
+      <a href="/user/appointments" class="<%= link('/user/appointments') %>">📅 Appointments</a>
+
+      <div class="mt-3 text-xs uppercase text-gray-400 px-4">In Stock</div>
+      <a href="/user/stock/fabrics" class="<%= link('/user/stock/fabrics') %>">🧵 Fabrics</a>
+      <a href="/user/stock/accessories" class="<%= link('/user/stock/accessories') %>">🧷 Accessories</a>
+      <a href="/user/stock/designs" class="<%= link('/user/stock/designs') %>">🎨 Designs</a>
+
+      <div class="mt-3 border-t border-gray-800 pt-3">
+        <a href="/user/logout" class="block px-4 py-2 rounded hover:bg-red-600">🚪 Logout</a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Content -->
+  <main class="flex-1 p-5">
+    <% if (success && success.length) { %>
+      <div class="mb-4 p-3 bg-green-100 text-green-800 rounded"><%= success[0] %></div>
+    <% } %>
+    <% if (error && error.length) { %>
+      <div class="mb-4 p-3 bg-red-100 text-red-800 rounded"><%= error[0] %></div>
+    <% } %>
+
+    <h1 class="text-2xl font-bold mb-1"><%= pageTitle || "" %></h1>
+    <p class="text-sm text-gray-500 mb-6"><%= pageSubTitle || "" %></p>

@@ -1,0 +1,43 @@
+<%- include("../partials/adminLayoutStart", {
+  pageTitle: "Dashboard",
+  pageSubTitle: "Overview of your tailor shop"
+}) %>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-gray-500 text-sm uppercase">Customers</p>
+    <p class="text-3xl font-bold mt-2"><%= customerCount %></p>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-gray-500 text-sm uppercase">Orders</p>
+    <p class="text-3xl font-bold mt-2"><%= orderCount %></p>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-gray-500 text-sm uppercase">Appointments</p>
+    <p class="text-3xl font-bold mt-2"><%= appointmentCount %></p>
+  </div>
+</div>
+
+<div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-lg font-bold mb-4">Quick Actions</h2>
+    <div class="flex flex-wrap gap-3">
+      <a href="/customers" class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800">Add Customer</a>
+      <a href="/orders" class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800">Create Order</a>
+      <a href="/inventory/fabrics" class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800">Add Fabric</a>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-lg font-bold mb-4">Tips</h2>
+    <ul class="list-disc ml-5 text-gray-600 space-y-2">
+      <li>Keep fabric stock updated to avoid out-of-stock issues.</li>
+      <li>Track order status: Pending → Stitching → Done.</li>
+      <li>Use reports to monitor monthly sales.</li>
+    </ul>
+  </div>
+</div>
+
+<%- include("../partials/adminLayoutEnd") %>

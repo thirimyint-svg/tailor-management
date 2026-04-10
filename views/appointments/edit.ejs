@@ -1,0 +1,106 @@
+<%- include("../partials/adminLayoutStart", { pageTitle, pageSubTitle }) %>
+
+<div class="max-w-3xl bg-white rounded-lg shadow p-6">
+  <form method="POST" action="/appointments/<%= appointment.id %>/update" class="space-y-4">
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Customer Name *</label>
+
+      <input
+        name="customerName"
+        id="customerName"
+        list="customerList"
+        value="<%= appointment.Customer ? appointment.Customer.name : '' %>"
+        class="w-full border rounded px-3 py-2"
+        required
+      />
+
+      <datalist id="customerList">
+        <% customers.forEach(c => { %>
+          <option value="<%= c.name %>"></option>
+        <% }) %>
+      </datalist>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Appointment Date & Time *</label>
+      <input type="datetime-local" name="appointmentAt"
+        value="<%= new Date(appointment.appointmentAt).toISOString().slice(0,16) %>"
+        class="w-full border rounded px-3 py-2" required />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div>
+        <label class="block text-sm font-medium mb-1">Email</label>
+        <input name="email" id="email" type="email" value="<%= appointment.email || '' %>"
+          class="w-full border rounded px-3 py-2" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">WhatsApp</label>
+        <input name="whatsapp" id="whatsapp" value="<%= appointment.whatsapp || '' %>"
+          class="w-full border rounded px-3 py-2" />
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-2">Hotel Pickup?</label>
+      <div class="flex items-center gap-6">
+        <label class="flex items-center gap-2">
+          <input type="radio" name="hotelPickup" value="no" class="accent-gray-900"
+            <%= appointment.hotelPickup ? "" : "checked" %> onchange="toggleHotel(false)" />
+          <span>No</span>
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="radio" name="hotelPickup" value="yes" class="accent-gray-900"
+            <%= appointment.hotelPickup ? "checked" : "" %> onchange="toggleHotel(true)" />
+          <span>Yes</span>
+        </label>
+      </div>
+    </div>
+
+    <div id="hotelBox" class="<%= appointment.hotelPickup ? "" : "hidden" %> space-y-3 border rounded p-3 bg-gray-50">
+      <div>
+        <label class="block text-sm font-medium mb-1">Hotel Name</label>
+        <input name="hotelName" value="<%= appointment.hotelName || '' %>" class="w-full border rounded px-3 py-2" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Room No</label>
+        <input name="roomNo" value="<%= appointment.roomNo || '' %>" class="w-full border rounded px-3 py-2" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Hotel Address</label>
+        <textarea name="hotelAddress" rows="2" class="w-full border rounded px-3 py-2"><%= appointment.hotelAddress || '' %></textarea>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Notify before</label>
+      <select name="remindBeforeMinutes" class="w-full border rounded px-3 py-2">
+        <option value="60" <%= appointment.remindBeforeMinutes === 60 ? "selected" : "" %>>1 hour before</option>
+        <option value="30" <%= appointment.remindBeforeMinutes === 30 ? "selected" : "" %>>30 minutes before</option>
+        <option value="15" <%= appointment.remindBeforeMinutes === 15 ? "selected" : "" %>>15 minutes before</option>
+        <option value="0"  <%= appointment.remindBeforeMinutes === 0 ? "selected" : "" %>>No reminder</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Notes</label>
+      <textarea name="notes" rows="4" class="w-full border rounded px-3 py-2"><%= appointment.notes || '' %></textarea>
+    </div>
+
+    <div class="flex gap-3">
+      <button class="bg-gray-900 text-white px-6 py-2 rounded hover:bg-gray-800">Update</button>
+      <a href="/appointments" class="bg-gray-100 px-6 py-2 rounded hover:bg-gray-200">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  function toggleHotel(show) {
+    const box = document.getElementById("hotelBox");
+    if (show) box.classList.remove("hidden");
+    else box.classList.add("hidden");
+  }
+</script>
+
+<%- include("../partials/adminLayoutEnd") %>
