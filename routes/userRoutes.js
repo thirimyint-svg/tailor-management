@@ -6,7 +6,7 @@ const auth = require("../controllers/userAuthController");
 
 // small middleware to require customer login
 function requireCustomer(req, res, next) {
-  if (!req.session.customer) {
+  if (!req.session.user) {
     return res.redirect("/user/login");
   }
   next();
@@ -20,11 +20,13 @@ console.log("Loaded userAuthController ✅", {
 // login/logout
 router.get("/login", auth.loginPage);
 router.post("/login", auth.login);
+router.post("/register", auth.register);
 router.post("/logout", auth.logout);
+router.get("/verify/:token", auth.verifyEmail);
 
 // customer dashboard
 router.get("/dashboard", requireCustomer, (req, res) => {
-  const customer = req.session.customer;
+  const customer = req.session.user;
 
   res.render("user/dashboard", {
     pageTitle: "Customer Dashboard",

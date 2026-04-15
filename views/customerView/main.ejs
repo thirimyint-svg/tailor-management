@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Milano Tailor — Bespoke Tailoring in Bangkok</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold:    { DEFAULT: '#8B6A3E', light: '#B8956A', dark:  '#6B5030' },
+            ink:     { DEFAULT: '#1A1208', mid: '#2E2212',   light: '#3D3020' },
+            parchment: { DEFAULT: '#F5EFE6', mid: '#E8DDD0', dark: '#D4C5B0' },
+            stone:   '#A89880',
+          },
+          fontFamily: {
+            serif:  ['Cormorant Garamond', 'Georgia', 'serif'],
+            sans:   ['Jost', 'sans-serif'],
+          },
+          letterSpacing: {
+            widest2: '0.18em',
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+
+    /* Mobile nav toggle */
+    #mobile-menu { display: none; }
+    #mobile-menu.open { display: flex; }
+
+    /* Subtle grain overlay on hero */
+    .hero-grain::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    /* Number counter animation */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.6s ease both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+
+    /* Hover underline link */
+    .link-underline {
+      position: relative;
+      display: inline-block;
+    }
+    .link-underline::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: -2px;
+      width: 0; height: 1px;
+      background: #8B6A3E;
+      transition: width 0.3s ease;
+    }
+    .link-underline:hover::after { width: 100%; }
+
+    /* Service card hover lift */
+    .service-card {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .service-card:hover {
+      transform: translateY(-4px);
+    }
+  </style>
+</head>
+<body class="bg-white font-sans text-ink antialiased">
+
+  <!-- ─── NAVIGATION ─────────────────────────────────────────────── -->
+  <header class="sticky top-0 z-50 bg-white border-b border-parchment-dark">
+    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="/" class="font-serif text-xl tracking-widest text-ink">
+        MILANO <span class="text-gold">TAILOR</span>
+      </a>
+
+      <!-- Desktop links -->
+      <ul class="hidden md:flex items-center gap-8 text-xs tracking-widest uppercase text-stone font-medium">
+        <li><a href="#services" class="link-underline hover:text-ink transition-colors">Services</a></li>
+        <li><a href="#process"  class="link-underline hover:text-ink transition-colors">Our Process</a></li>
+        <li><a href="#fabrics"  class="link-underline hover:text-ink transition-colors">Fabrics</a></li>
+        <li><a href="#about"    class="link-underline hover:text-ink transition-colors">About</a></li>
+      </ul>
+
+      <!-- Desktop CTA -->
+       <div class='flex items-center gap-4'>
+<a href="/book-appointment"
+         class="hidden md:inline-flex items-center gap-2 border border-gold text-gold text-xs tracking-widest uppercase px-5 py-2.5 hover:bg-gold hover:text-white transition-colors duration-300"
+         data-book>
+        Book Now
+      </a>
+
+      <% if (user) { %>
+        <%- include('./profileIcon') %>
+<% } else { %>
+        <a href="/login"
+         class="hidden md:inline-flex items-center gap-2 border border-gold text-gold text-xs tracking-widest uppercase px-5 py-2.5 hover:bg-gold hover:text-white transition-colors duration-300"
+         data-login>
+        Login
+      </a>
+<% } %>
+      
+       </div>
+      
+
+      <!-- Mobile hamburger -->
+      <button id="hamburger" class="md:hidden flex flex-col gap-1.5 p-1" aria-label="Open menu">
+        <span class="block w-6 h-px bg-ink transition-all duration-300" id="bar1"></span>
+        <span class="block w-6 h-px bg-ink transition-all duration-300" id="bar2"></span>
+        <span class="block w-4 h-px bg-ink transition-all duration-300" id="bar3"></span>
+      </button>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu"
+         class="flex-col gap-0 bg-ink text-parchment md:hidden border-t border-ink-mid">
+      <a href="#services" class="px-6 py-4 text-xs tracking-widest uppercase border-b border-ink-light hover:text-gold transition-colors" onclick="closeMobileMenu()">Services</a>
+      <a href="#process"  class="px-6 py-4 text-xs tracking-widest uppercase border-b border-ink-light hover:text-gold transition-colors" onclick="closeMobileMenu()">Our Process</a>
+      <a href="#fabrics"  class="px-6 py-4 text-xs tracking-widest uppercase border-b border-ink-light hover:text-gold transition-colors" onclick="closeMobileMenu()">Fabrics</a>
+      <a href="#about"    class="px-6 py-4 text-xs tracking-widest uppercase border-b border-ink-light hover:text-gold transition-colors" onclick="closeMobileMenu()">About</a>
+      <a href="/book-appointment" class="mx-6 my-5 border border-gold text-gold text-xs tracking-widest uppercase px-5 py-3 text-center hover:bg-gold hover:text-white transition-colors">Book an Appointment</a>
+    </div>
+  </header>
+
+
+  <!-- ─── HERO ───────────────────────────────────────────────────── -->
+  <section class="relative hero-grain overflow-hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[88vh]">
+
+      <!-- Left: dark text panel -->
+      <div class="bg-ink flex flex-col justify-center px-8 sm:px-14 lg:px-20 py-20 lg:py-0 order-2 lg:order-1">
+        <p class="text-gold-light text-xs tracking-widest2 uppercase mb-6 fade-up">
+          Bespoke Tailoring · Bangkok
+        </p>
+        <h1 class="font-serif text-5xl sm:text-6xl lg:text-7xl font-medium leading-[1.1] text-parchment mb-6 fade-up delay-1">
+          Clothes made<br>
+          <em class="not-italic text-gold-light">for you,</em><br>
+          alone.
+        </h1>
+        <p class="text-stone text-base leading-relaxed max-w-sm mb-10 fade-up delay-2">
+          Every garment begins with your measurements, your style, your occasion.
+          Crafted by hand on Sukhumvit — ready in as little as 48 hours.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 fade-up delay-3">
+          <a href="/book-appointment"
+             class="inline-flex items-center justify-center gap-2 bg-gold text-white text-xs tracking-widest uppercase px-8 py-4 hover:bg-gold-dark transition-colors duration-300"
+             data-book>
+            Book a Consultation
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </a>
+          <a href="#services"
+             class="inline-flex items-center justify-center border border-stone text-stone text-xs tracking-widest uppercase px-8 py-4 hover:border-parchment hover:text-parchment transition-colors duration-300">
+            Our Services
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: illustration panel -->
+      <div class="bg-parchment-dark flex items-center justify-center relative overflow-hidden order-1 lg:order-2 min-h-[50vw] lg:min-h-0">
+        <!-- Decorative background rings -->
+        <div class="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+          <div class="w-[600px] h-[600px] rounded-full border border-gold"></div>
+        </div>
+        <div class="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+          <div class="w-[400px] h-[400px] rounded-full border border-gold"></div>
+        </div>
+
+        <!-- Suit SVG illustration -->
+        <svg viewBox="0 0 340 440" class="w-64 sm:w-80 lg:w-96 max-h-[70vh] drop-shadow-sm" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Shirt base -->
+          <rect x="138" y="175" width="64" height="120" fill="#F5F0EB" stroke="#DDD5CC" stroke-width="0.8"/>
+          <!-- Jacket body -->
+          <path d="M100 130 L68 240 L68 390 L272 390 L272 240 L240 130" fill="#EDE4D8" stroke="#B0A090" stroke-width="1.5"/>
+          <!-- Left lapel -->
+          <path d="M100 130 L138 168 L170 188 L120 172 Z" fill="#E4D8CA" stroke="#B0A090" stroke-width="1"/>
+          <!-- Right lapel -->
+          <path d="M240 130 L202 168 L170 188 L220 172 Z" fill="#E4D8CA" stroke="#B0A090" stroke-width="1"/>
+          <!-- Collar -->
+          <path d="M138 128 L170 150 L202 128 L196 112 L170 122 L144 112 Z" fill="#F5F0EB" stroke="#DDD5CC" stroke-width="0.8"/>
+          <!-- Tie -->
+          <path d="M166 148 L162 180 L170 200 L178 180 L174 148 Z" fill="#8B6A3E" opacity="0.85"/>
+          <path d="M163 148 L174 148 L170 136 Z" fill="#7A5C34" opacity="0.9"/>
+          <!-- Pocket square -->
+          <path d="M200 210 L218 206 L215 224 L197 227 Z" fill="#8B6A3E" opacity="0.6"/>
+          <!-- Jacket buttons -->
+          <circle cx="170" cy="265" r="4.5" fill="#C4B09A" stroke="#B0A090" stroke-width="0.5"/>
+          <circle cx="170" cy="285" r="4.5" fill="#C4B09A" stroke="#B0A090" stroke-width="0.5"/>
+          <!-- Left sleeve -->
+          <path d="M100 130 L58 228 L74 238 L112 148" fill="#EAE0D5" stroke="#B0A090" stroke-width="1.2"/>
+          <!-- Right sleeve -->
+          <path d="M240 130 L282 228 L266 238 L228 148" fill="#EAE0D5" stroke="#B0A090" stroke-width="1.2"/>
+          <!-- Left sleeve buttons -->
+          <circle cx="68" cy="230" r="3" fill="#C4B09A" stroke="#B0A090" stroke-width="0.5"/>
+          <circle cx="72" cy="238" r="3" fill="#C4B09A" stroke="#B0A090" stroke-width="0.5"/>
+          <!-- Right sleeve buttons -->
+          <circle cx="272" cy="230" r="3" fill="#C4B09A" stroke="#B0A090" stroke-width="0.5"/>
+          <circle cx="268" cy="238" r="3" fill="#C4B09A" stroke="#B0A090" stroke-width="0.5"/>
+          <!-- Chest seam lines -->
+          <path d="M130 220 Q100 260 95 320" stroke="#C4B09A" stroke-width="0.6" opacity="0.5"/>
+          <path d="M210 220 Q240 260 245 320" stroke="#C4B09A" stroke-width="0.6" opacity="0.5"/>
+          <!-- Measuring tape -->
+          <path d="M58 300 Q100 286 140 296 Q180 308 220 296 Q255 286 278 298" stroke="#8B6A3E" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.5"/>
+          <!-- Label -->
+          <rect x="228" y="332" width="38" height="24" rx="2" fill="white" stroke="#C4B09A" stroke-width="0.6"/>
+          <line x1="233" y1="339" x2="261" y2="339" stroke="#C4B09A" stroke-width="0.5"/>
+          <line x1="233" y1="345" x2="259" y2="345" stroke="#C4B09A" stroke-width="0.5"/>
+          <line x1="233" y1="351" x2="254" y2="351" stroke="#C4B09A" stroke-width="0.5"/>
+          <!-- Brand text -->
+          <text x="170" y="418" text-anchor="middle" font-size="9" fill="#8B6A3E" letter-spacing="6" font-family="sans-serif">BESPOKE</text>
+          <text x="170" y="430" text-anchor="middle" font-size="7" fill="#B8956A" letter-spacing="3" font-family="sans-serif">BANGKOK</text>
+        </svg>
+
+        <!-- Floating badge -->
+        <div class="absolute top-6 right-6 bg-ink text-parchment text-center px-4 py-3 border border-ink-mid">
+          <div class="font-serif text-2xl text-gold leading-none">48</div>
+          <div class="text-xs tracking-widest uppercase text-stone mt-0.5">hr express</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ─── TRUST BAR ─────────────────────────────────────────────── -->
+  <div class="border-y border-parchment-dark bg-parchment">
+    <div class="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 divide-x divide-parchment-dark">
+      <div class="py-6 px-6 text-center">
+        <div class="font-serif text-3xl text-gold font-medium">6,000+</div>
+        <div class="text-xs tracking-widest uppercase text-stone mt-1">Fabric Selections</div>
+      </div>
+      <div class="py-6 px-6 text-center">
+        <div class="font-serif text-3xl text-gold font-medium">48 hrs</div>
+        <div class="text-xs tracking-widest uppercase text-stone mt-1">Express Turnaround</div>
+      </div>
+      <div class="py-6 px-6 text-center border-t border-parchment-dark lg:border-t-0">
+        <div class="font-serif text-3xl text-gold font-medium">2–3</div>
+        <div class="text-xs tracking-widest uppercase text-stone mt-1">Fittings Included</div>
+      </div>
+      <div class="py-6 px-6 text-center border-t border-parchment-dark lg:border-t-0">
+        <div class="font-serif text-3xl text-gold font-medium">5.0 ★</div>
+        <div class="text-xs tracking-widest uppercase text-stone mt-1">Google Rating</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ─── PROCESS ───────────────────────────────────────────────── -->
+  <section id="process" class="py-20 lg:py-28 px-6 border-b border-parchment-dark">
+    <div class="max-w-6xl mx-auto">
+
+      <div class="mb-14">
+        <p class="text-gold text-xs tracking-widest2 uppercase mb-3">How it works</p>
+        <h2 class="font-serif text-4xl lg:text-5xl font-medium text-ink leading-tight max-w-md">
+          Four steps to a perfect garment
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Step -->
+        <% [
+          { n:'01', title:'Consultation', desc:'Meet in-store or at your hotel. We discuss style, occasion, and what you want to feel wearing it.' },
+          { n:'02', title:'Fabric & Design', desc:'Choose from Italian, English, and Asian mills. We guide you on weight, weave, and colour.' },
+          { n:'03', title:'Fitting Session', desc:'Cut to your exact measurements. Return for one or two fittings to perfect the silhouette.' },
+          { n:'04', title:'Final Delivery', desc:'Collect in-store or receive at your hotel. International shipping available worldwide.' }
+        ].forEach(s => { %>
+        <div>
+          <div class="text-xs text-gold tracking-widest uppercase border-t-2 border-gold pt-3 mb-4"><%= s.n %></div>
+          <h3 class="font-serif text-xl font-medium text-ink mb-2"><%= s.title %></h3>
+          <p class="text-sm text-stone leading-relaxed"><%= s.desc %></p>
+        </div>
+        <% }) %>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ─── SERVICES ─────────────────────────────────────────────── -->
+  <section id="services" class="py-20 lg:py-28 px-6 bg-ink">
+    <div class="max-w-6xl mx-auto">
+
+      <div class="mb-14">
+        <p class="text-gold-light text-xs tracking-widest2 uppercase mb-3">What we make</p>
+        <h2 class="font-serif text-4xl lg:text-5xl font-medium text-parchment leading-tight">
+          Our Services
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-ink-light">
+        <!-- Service Card: Suits -->
+        <div class="service-card bg-ink-mid p-8 lg:p-10 cursor-default">
+          <svg class="w-8 h-8 mb-6 text-gold" fill="none" viewBox="0 0 32 32" stroke="currentColor" stroke-width="1.2">
+            <path d="M11 5 L5 12 L5 28 L27 28 L27 12 L21 5"/>
+            <path d="M16 5 L13 11 L16 14 L19 11 Z"/>
+            <line x1="16" y1="14" x2="16" y2="28" stroke-width="0.8" opacity="0.5"/>
+          </svg>
+          <h3 class="font-serif text-2xl text-parchment font-medium mb-3">Bespoke Suits</h3>
+          <p class="text-sm text-stone leading-relaxed mb-5">Single-breasted, double-breasted, or three-piece. Canvas construction with hand-stitched details throughout.</p>
+          <div class="text-xs tracking-widest text-gold uppercase">From 12,000 THB</div>
+        </div>
+
+        <!-- Dress Shirts -->
+        <div class="service-card bg-ink-mid p-8 lg:p-10 cursor-default">
+          <svg class="w-8 h-8 mb-6 text-gold" fill="none" viewBox="0 0 32 32" stroke="currentColor" stroke-width="1.2">
+            <path d="M8 4 L4 10 L4 28 L28 28 L28 10 L24 4"/>
+            <path d="M16 4 L12 10 L16 13 L20 10 Z"/>
+          </svg>
+          <h3 class="font-serif text-2xl text-parchment font-medium mb-3">Dress Shirts</h3>
+          <p class="text-sm text-stone leading-relaxed mb-5">Egyptian cotton, linen, or poplin. Choose collar style, cuff design, and personal monogramming.</p>
+          <div class="text-xs tracking-widest text-gold uppercase">From 2,500 THB</div>
+        </div>
+
+        <!-- Women's Wear -->
+        <div class="service-card bg-ink-mid p-8 lg:p-10 cursor-default">
+          <svg class="w-8 h-8 mb-6 text-gold" fill="none" viewBox="0 0 32 32" stroke="currentColor" stroke-width="1.2">
+            <path d="M9 4 Q9 16 16 16 Q23 16 23 4"/>
+            <path d="M7 16 L7 28 L25 28 L25 16 Q23 16 16 16 Q9 16 7 16Z"/>
+          </svg>
+          <h3 class="font-serif text-2xl text-parchment font-medium mb-3">Women's Wear</h3>
+          <p class="text-sm text-stone leading-relaxed mb-5">Blazers, dresses, skirts, and tailored trousers for every professional or formal occasion.</p>
+          <div class="text-xs tracking-widest text-gold uppercase">From 4,500 THB</div>
+        </div>
+
+        <!-- Wedding -->
+        <div class="service-card bg-ink-mid p-8 lg:p-10 cursor-default">
+          <svg class="w-8 h-8 mb-6 text-gold" fill="none" viewBox="0 0 32 32" stroke="currentColor" stroke-width="1.2">
+            <rect x="5" y="9" width="22" height="19" rx="1"/>
+            <path d="M5 14 L27 14" stroke-width="0.8" opacity="0.5"/>
+            <circle cx="16" cy="5" r="3"/>
+            <line x1="16" y1="8" x2="16" y2="9"/>
+          </svg>
+          <h3 class="font-serif text-2xl text-parchment font-medium mb-3">Wedding & Formal</h3>
+          <p class="text-sm text-stone leading-relaxed mb-5">Tuxedos, morning suits, and evening wear. Coordinated looks for the entire wedding party.</p>
+          <div class="text-xs tracking-widest text-gold uppercase">From 18,000 THB</div>
+        </div>
+
+        <!-- Trousers -->
+        <div class="service-card bg-ink-mid p-8 lg:p-10 cursor-default">
+          <svg class="w-8 h-8 mb-6 text-gold" fill="none" viewBox="0 0 32 32" stroke="currentColor" stroke-width="1.2">
+            <path d="M7 6 L7 28 L14 28 L16 16 L18 28 L25 28 L25 6 Z"/>
+            <line x1="7" y1="12" x2="25" y2="12" stroke-width="0.8" opacity="0.5"/>
+          </svg>
+          <h3 class="font-serif text-2xl text-parchment font-medium mb-3">Trousers & Chinos</h3>
+          <p class="text-sm text-stone leading-relaxed mb-5">Flat-front or pleated, slim or relaxed. Cut to your exact inseam and waist measurements.</p>
+          <div class="text-xs tracking-widest text-gold uppercase">From 3,200 THB</div>
+        </div>
+
+        <!-- Alterations -->
+        <div class="service-card bg-ink-mid p-8 lg:p-10 cursor-default">
+          <svg class="w-8 h-8 mb-6 text-gold" fill="none" viewBox="0 0 32 32" stroke="currentColor" stroke-width="1.2">
+            <circle cx="16" cy="16" r="11"/>
+            <path d="M11 16 L14.5 19.5 L21 13" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <h3 class="font-serif text-2xl text-parchment font-medium mb-3">Alterations</h3>
+          <p class="text-sm text-stone leading-relaxed mb-5">Expert adjustments to existing garments. Let-out, take-in, re-hem, and re-lining with care.</p>
+          <div class="text-xs tracking-widest text-gold uppercase">From 500 THB</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ─── WHY US ────────────────────────────────────────────────── -->
+  <section id="about" class="py-20 lg:py-28 px-6 border-b border-parchment-dark">
+    <div class="max-w-6xl mx-auto">
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+        <!-- Left: visual block -->
+        <div class="bg-ink rounded-sm overflow-hidden flex items-center justify-center py-16 px-10 relative order-2 lg:order-1">
+          <!-- Decorative circle -->
+          <div class="absolute w-72 h-72 rounded-full border border-gold-dark opacity-20"></div>
+          <div class="absolute w-48 h-48 rounded-full border border-gold-dark opacity-15"></div>
+
+          <svg viewBox="0 0 240 220" class="relative w-full max-w-xs" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Fabric bolt -->
+            <ellipse cx="120" cy="155" rx="78" ry="18" fill="#3A2E1A" opacity="0.7"/>
+            <rect x="52" y="42" width="136" height="112" rx="4" fill="#8B6A3E" opacity="0.12" stroke="#B8956A" stroke-width="0.8"/>
+            <path d="M64 54 Q120 48 176 58 L170 138 Q120 148 70 138 Z" fill="#B8956A" opacity="0.25"/>
+            <!-- Fabric weave lines -->
+            <line x1="74" y1="66" x2="164" y2="69" stroke="#D4AA7A" stroke-width="0.5" opacity="0.5"/>
+            <line x1="72" y1="82" x2="166" y2="86" stroke="#D4AA7A" stroke-width="0.5" opacity="0.5"/>
+            <line x1="70" y1="98" x2="168" y2="103" stroke="#D4AA7A" stroke-width="0.5" opacity="0.5"/>
+            <line x1="68" y1="114" x2="170" y2="119" stroke="#D4AA7A" stroke-width="0.5" opacity="0.5"/>
+            <line x1="68" y1="130" x2="168" y2="134" stroke="#D4AA7A" stroke-width="0.5" opacity="0.4"/>
+            <!-- Needle and thread -->
+            <line x1="168" y1="38" x2="140" y2="108" stroke="#D4AA7A" stroke-width="1.2" opacity="0.8"/>
+            <ellipse cx="168" cy="34" rx="5" ry="10" stroke="#D4AA7A" stroke-width="1.2" fill="none" opacity="0.8"/>
+            <circle cx="169" cy="32" r="2" fill="#D4AA7A" opacity="0.8"/>
+            <!-- Label text -->
+            <text x="120" y="173" text-anchor="middle" fill="#B8956A" font-size="10" letter-spacing="4" font-family="sans-serif" opacity="0.9">HANDCRAFTED</text>
+            <text x="120" y="188" text-anchor="middle" fill="#8B6A3E" font-size="8" letter-spacing="2.5" font-family="sans-serif" opacity="0.7">SUKHUMVIT · BANGKOK</text>
+          </svg>
+        </div>
+
+        <!-- Right: points -->
+        <div class="order-1 lg:order-2">
+          <p class="text-gold text-xs tracking-widest2 uppercase mb-4">Why Milano</p>
+          <h2 class="font-serif text-4xl lg:text-5xl font-medium text-ink leading-tight mb-10">
+            Not just measurements —<br>a relationship.
+          </h2>
+
+          <div class="space-y-7">
+            <% [
+              { title:'Hotel & home visits', desc:'We come to you anywhere in Bangkok. Complimentary pickup with 24-hour notice, no extra charge.' },
+              { title:'Premium European fabrics', desc:'Sourced directly from mills in Italy and England. Over 6,000 options from fine wool to linen.' },
+              { title:'Express for travellers', desc:'Visiting Bangkok briefly? Select garments can be completed in 48 hours without sacrificing quality.' },
+              { title:'Measurements on file', desc:'Return clients reorder in minutes. We keep your personal pattern on file for life.' }
+            ].forEach(p => { %>
+            <div class="flex gap-4 items-start">
+              <div class="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0 mt-2"></div>
+              <div>
+                <h4 class="font-serif text-lg font-medium text-ink mb-1"><%= p.title %></h4>
+                <p class="text-sm text-stone leading-relaxed"><%= p.desc %></p>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ─── TESTIMONIALS ──────────────────────────────────────────── -->
+  <section class="py-20 lg:py-28 px-6 bg-parchment border-b border-parchment-dark">
+    <div class="max-w-6xl mx-auto">
+
+      <div class="mb-14">
+        <p class="text-gold text-xs tracking-widest2 uppercase mb-3">Clients say</p>
+        <h2 class="font-serif text-4xl lg:text-5xl font-medium text-ink leading-tight">
+          Worn around the world
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% [
+          { quote:'Got two suits in three days. The fit rivals anything I\'ve had made in London — at a fraction of the price. I\'ll be back every trip.', name:'James H.', origin:'London, UK' },
+          { quote:'They visited my hotel, took all measurements, and delivered a perfect blazer the next morning. Extraordinary service from start to finish.', name:'Marie-Claire D.', origin:'Paris, France' },
+          { quote:'First time trying bespoke tailoring. The team was patient, explained every option, and the final suit exceeded all expectations.', name:'Kenji T.', origin:'Tokyo, Japan' }
+        ].forEach(t => { %>
+        <div class="bg-white border border-parchment-dark p-8">
+          <div class="text-gold text-base mb-4">★★★★★</div>
+          <p class="font-serif text-lg italic text-ink-light leading-relaxed mb-6">"<%= t.quote %>"</p>
+          <div>
+            <div class="text-sm font-medium text-ink tracking-wide"><%= t.name %></div>
+            <div class="text-xs text-stone mt-0.5"><%= t.origin %></div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ─── FABRICS CALLOUT ───────────────────────────────────────── -->
+  <section id="fabrics" class="py-20 lg:py-28 px-6 border-b border-parchment-dark">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <p class="text-gold text-xs tracking-widest2 uppercase mb-4">Our materials</p>
+          <h2 class="font-serif text-4xl lg:text-5xl font-medium text-ink leading-tight mb-6">
+            Over 6,000 fabrics from the world's finest mills
+          </h2>
+          <p class="text-stone leading-relaxed mb-4 text-sm">
+            We stock an extensive selection of cloths sourced directly from renowned mills in Italy and England — including Drago, Dormeuil, Loro Piana, and Holland & Sherry — alongside high-quality Asian textiles suited to Bangkok's climate.
+          </p>
+          <p class="text-stone leading-relaxed text-sm">
+            From breathable tropical wool to sumptuous cashmere blends, our consultants will guide you to the perfect cloth for your occasion, lifestyle, and personal taste.
+          </p>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <% [
+            { label:'Wool & Worsted', sub:'Italian & English mills' },
+            { label:'Linen & Cotton', sub:'Lightweight, breathable' },
+            { label:'Cashmere Blends', sub:'Luxury warmth' },
+            { label:'Silk & Tropical', sub:'Bangkok climate-ready' }
+          ].forEach(f => { %>
+          <div class="border border-parchment-dark bg-parchment p-6">
+            <div class="w-8 h-1 bg-gold mb-4"></div>
+            <div class="font-serif text-lg font-medium text-ink"><%= f.label %></div>
+            <div class="text-xs text-stone mt-1"><%= f.sub %></div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ─── BOOKING CTA ───────────────────────────────────────────── -->
+  <section class="bg-ink py-20 lg:py-28 px-6 text-center">
+    <div class="max-w-2xl mx-auto">
+      <p class="text-gold-light text-xs tracking-widest2 uppercase mb-5">Ready to begin?</p>
+      <h2 class="font-serif text-4xl lg:text-5xl font-medium text-parchment leading-tight mb-4">
+        Begin your fitting today
+      </h2>
+      <p class="text-stone text-sm leading-relaxed mb-10">
+        In-store on Sukhumvit · Hotel visits available across Bangkok · International shipping worldwide
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/book-appointment"
+           class="inline-flex items-center justify-center gap-2 bg-gold text-white text-xs tracking-widest uppercase px-10 py-4 hover:bg-gold-dark transition-colors duration-300"
+           data-book>
+          Book a Consultation
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+        <a href="https://wa.me/66800000000"
+           class="inline-flex items-center justify-center gap-2 border border-stone text-stone text-xs tracking-widest uppercase px-10 py-4 hover:border-parchment hover:text-parchment transition-colors duration-300">
+          WhatsApp Us
+        </a>
+      </div>
+      <!-- Location note -->
+      <div class="mt-12 pt-8 border-t border-ink-light text-xs text-stone space-y-1">
+        <p class="tracking-wide">390/18 Sukhumvit Soi 18, Khlong Toei, Bangkok 10110</p>
+        <p class="tracking-wide">Open daily · 9:30 AM – 9:00 PM · <a href="tel:+66800000000" class="text-gold-light hover:text-gold transition-colors">+66 80 000 0000</a></p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ─── FOOTER ────────────────────────────────────────────────── -->
+  <footer class="bg-ink border-t border-ink-light py-8 px-6">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="font-serif text-base tracking-widest text-parchment">
+        MILANO <span class="text-gold">TAILOR</span>
+      </div>
+      <nav class="flex flex-wrap justify-center gap-6">
+        <a href="#services" class="text-xs tracking-widest uppercase text-stone hover:text-gold transition-colors">Services</a>
+        <a href="#process"  class="text-xs tracking-widest uppercase text-stone hover:text-gold transition-colors">Process</a>
+        <a href="#fabrics"  class="text-xs tracking-widest uppercase text-stone hover:text-gold transition-colors">Fabrics</a>
+        <a href="#about"    class="text-xs tracking-widest uppercase text-stone hover:text-gold transition-colors">About</a>
+        <a href="/book-appointment" class="text-xs tracking-widest uppercase text-stone hover:text-gold transition-colors">Book</a>
+      </nav>
+      <p class="text-xs text-stone text-center sm:text-right">
+        © 2026 Milano Tailor · Sukhumvit, Bangkok
+      </p>
+    </div>
+  </footer>
+
+
+  <!-- ─── BOOKING MODAL ───────────────────────────────────────────── -->
+  <div id="booking-modal"
+       class="fixed inset-0 z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300"
+       aria-modal="true" role="dialog" aria-labelledby="modal-title">
+
+    <!-- Backdrop -->
+    <div id="modal-backdrop"
+         class="absolute inset-0 bg-ink/70 backdrop-blur-sm"
+         onclick="closeModal()"></div>
+
+    <!-- Panel -->
+    <div id="modal-panel"
+         class="relative bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl translate-y-4 transition-transform duration-300 flex flex-col">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between px-7 py-5 border-b border-parchment-dark sticky top-0 bg-white z-10">
+        <div>
+          <p class="text-gold text-[10px] tracking-widest uppercase mb-0.5">Milano Tailor</p>
+          <h2 id="modal-title" class="font-serif text-2xl font-medium text-ink">Book a Consultation</h2>
+        </div>
+        <button onclick="closeModal()"
+                class="w-8 h-8 flex items-center justify-center text-stone hover:text-ink transition-colors"
+                aria-label="Close modal">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Form body -->
+      <form method="POST" action="/appointments/create" class="px-7 py-6 space-y-5">
+
+        <!-- Customer name -->
+        <div>
+          <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-2">
+            Customer Name <span class="text-gold">*</span>
+          </label>
+          <input
+            name="customerName"
+            placeholder="Enter Your Name"
+            required
+            class="w-full border border-parchment-dark bg-parchment/30 px-4 py-2.5 text-sm text-ink placeholder-stone focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors"
+          />
+        </div>
+
+        <!-- Date & time -->
+        <div>
+          <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-2">
+            Appointment Date & Time <span class="text-gold">*</span>
+          </label>
+          <input type="datetime-local" name="appointmentAt" required
+                 class="w-full border border-parchment-dark bg-parchment/30 px-4 py-2.5 text-sm text-ink focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors" />
+        </div>
+
+        <!-- Email + WhatsApp -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-2">Email</label>
+            <input name="email" type="email" placeholder="you@email.com"
+                   class="w-full border border-parchment-dark bg-parchment/30 px-4 py-2.5 text-sm text-ink placeholder-stone focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors" />
+          </div>
+          <div>
+            <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-2">WhatsApp</label>
+            <input name="whatsapp" placeholder="+66 80 000 0000"
+                   class="w-full border border-parchment-dark bg-parchment/30 px-4 py-2.5 text-sm text-ink placeholder-stone focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors" />
+          </div>
+        </div>
+
+        <!-- Hotel pickup -->
+        <div>
+          <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-3">Hotel Pickup?</label>
+          <div class="flex items-center gap-8">
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="radio" name="hotelPickup" value="no" checked
+                     class="accent-gold w-4 h-4"
+                     onchange="toggleHotel(false)" />
+              <span class="text-sm text-ink group-hover:text-gold transition-colors">No</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="radio" name="hotelPickup" value="yes"
+                     class="accent-gold w-4 h-4"
+                     onchange="toggleHotel(true)" />
+              <span class="text-sm text-ink group-hover:text-gold transition-colors">Yes</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Hotel detail fields -->
+        <div id="hotelBox" class="hidden space-y-4 border-l-2 border-gold pl-5 bg-parchment/20 py-4 pr-4">
+          <div>
+            <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-2">Hotel Name</label>
+            <input name="hotelName"
+                   class="w-full border border-parchment-dark bg-white px-4 py-2.5 text-sm text-ink focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors" />
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-2">Room No.</label>
+              <input name="roomNo"
+                     class="w-full border border-parchment-dark bg-white px-4 py-2.5 text-sm text-ink focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors" />
+            </div>
+            <div>
+              <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-2">Hotel Address</label>
+              <input name="hotelAddress"
+                     class="w-full border border-parchment-dark bg-white px-4 py-2.5 text-sm text-ink focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Reminder -->
+        <div>
+          <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-2">Notify Before</label>
+          <select name="remindBeforeMinutes"
+                  class="w-full border border-parchment-dark bg-parchment/30 px-4 py-2.5 text-sm text-ink focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors appearance-none cursor-pointer">
+            <option value="60">1 hour before</option>
+            <option value="30">30 minutes before</option>
+            <option value="15">15 minutes before</option>
+            <option value="0">No reminder</option>
+          </select>
+          <p class="text-xs text-stone mt-1.5">WhatsApp & email reminders can be configured in settings.</p>
+        </div>
+
+        <!-- Notes -->
+        <div>
+          <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-2">Notes</label>
+          <textarea name="notes" rows="3" placeholder="Garment type, style preferences, occasion…"
+                    class="w-full border border-parchment-dark bg-parchment/30 px-4 py-2.5 text-sm text-ink placeholder-stone resize-none focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors"></textarea>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+                class="w-full bg-gold text-white text-xs tracking-widest uppercase py-3.5 hover:bg-gold-dark transition-colors duration-300 flex items-center justify-center gap-2 mt-2">
+          Confirm Appointment
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </button>
+
+      </form>
+    </div>
+  </div>
+  
+  <!-- ─── LOGIN MODAL ──────────────────────────────────────────────── -->
+<div id="login-modal"
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300"
+     aria-modal="true" role="dialog" aria-labelledby="login-modal-title">
+
+  <!-- Backdrop -->
+  <div class="absolute inset-0 bg-ink/70 backdrop-blur-sm" onclick="closeLoginModal()"></div>
+
+  <!-- Panel -->
+  <div id="login-panel"
+       class="relative bg-white w-full max-w-sm shadow-2xl translate-y-4 transition-transform duration-300">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between px-7 py-5 border-b border-parchment-dark">
+      <div>
+        <p class="text-gold text-[10px] tracking-widest uppercase mb-0.5">Milano Tailor</p>
+        <h2 id="login-modal-title" class="font-serif text-2xl font-medium text-ink">Welcome back</h2>
+      </div>
+      <button onclick="closeLoginModal()"
+              class="text-stone hover:text-ink transition-colors mt-1"
+              aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <form method="POST" action="/user/login" class="px-7 py-6 space-y-5">
+
+      <div>
+        <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-2">
+          Email <span class="text-gold">*</span>
+        </label>
+        <input type="email" name="email" placeholder="you@email.com" required
+               class="w-full border border-parchment-dark bg-parchment/30 px-4 py-2.5 text-sm text-ink placeholder-stone focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors" />
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-xs tracking-widest uppercase text-stone font-medium">
+            Password <span class="text-gold">*</span>
+          </label>
+          <a href="/forgot-password" class="text-xs text-gold hover:text-gold-dark transition-colors">Forgot password?</a>
+        </div>
+        <input type="password" name="password" placeholder="••••••••" required
+               class="w-full border border-parchment-dark bg-parchment/30 px-4 py-2.5 text-sm text-ink placeholder-stone focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors" />
+      </div>
+
+      <button type="submit"
+              class="w-full bg-gold text-white text-xs tracking-widest uppercase py-3.5 hover:bg-gold-dark transition-colors duration-300 flex items-center justify-center gap-2">
+        Sign In
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+        </svg>
+      </button>
+
+      <p class="text-center text-xs text-stone">
+        Don't have an account?
+        <a href="#" onclick="openRegisterModal()"  class="text-gold hover:text-gold-dark transition-colors font-medium">Create one</a>
+      </p>
+
+    </form>
+  </div>
+</div>
+
+ <!-- Register Modal -->
+ <div id="register-modal"
+      class="fixed inset-0 z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300"
+      aria-modal="true" role="dialog" aria-labelledby="register-modal-title">
+
+   <!-- Backdrop -->
+   <div class="absolute inset-0 bg-ink/70 backdrop-blur-sm" onclick="closeRegisterModal()"></div>
+
+   <!-- Panel -->
+   <div id="register-panel"
+        class="relative bg-white w-full max-w-sm shadow-2xl translate-y-4 transition-transform duration-300">
+
+     <!-- Header -->
+     <div class="flex items-start justify-between px-7 py-5 border-b border-parchment-dark">
+       <div>
+         <p class="text-gold text-[10px] tracking-widest uppercase mb-0.5">Milano Tailor</p>
+         <h2 id="register-modal-title" class="font-serif text-2xl font-medium text-ink">Create an account</h2>
+       </div>
+       <button onclick="closeRegisterModal()"
+               class="text-stone hover:text-ink transition-colors mt-1"
+               aria-label="Close">
+         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+         </svg>
+       </button>
+     </div>
+
+     <!-- Register Form -->
+     <form method="POST" action="/user/register" class="px-7 py-6 space-y-5">
+
+       <div>
+         <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-2">
+           Full Name <span class="text-gold">*</span>
+         </label>
+         <input type="text" name="customerName" placeholder="John Doe" required
+                class="w-full border border-parchment-dark bg-parchment/30 px-4 py-2.5 text-sm text-ink placeholder-stone focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors" />
+       </div>
+
+       <div>
+         <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-2">
+           Email <span class="text-gold">*</span>
+         </label>
+         <input type="email" name="email" placeholder="you@email.com" required
+                class="w-full border border-parchment-dark bg-parchment/30 px-4 py-2.5 text-sm text-ink placeholder-stone focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors" />
+       </div>
+
+       <div>
+         <label class="block text-xs tracking-widest uppercase text-stone font-medium mb-2">
+           Phone Number <span class="text-gold">*</span>
+         </label>
+         <input type="tel" name="phone" placeholder="+1 (555) 123-4567" required
+                class="w-full border border-parchment-dark bg-parchment/30 px-4 py-2.5 text-sm text-ink placeholder-stone focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors" />
+       </div>
+
+       <div>
+         <div class ="flex items-center justify-between mb-2">
+           <label class="text-xs tracking-widest uppercase text-stone font-medium">
+             Password <span class="text-gold">*</span>
+           </label>
+           <a href="/forgot-password" class="text-xs text-gold hover:text-gold-dark transition-colors">Forgot password?</a>
+         </div>
+         <input type="password" name="password" placeholder="••••••••" required
+                class="w-full border border-parchment-dark bg-parchment/30 px-4 py-2.5 text-sm text-ink placeholder-stone focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors" />
+       </div>
+
+       <button type="submit"
+               class="w-full bg-gold text-white text-xs tracking-widest uppercase py-3.5 hover:bg-gold-dark transition-colors duration-300 flex items-center justify-center gap-2">
+         Create Account
+         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+           <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+         </svg>
+       </button>
+
+     </form>
+   </div>
+ </div>
+
+  <!-- ─── SCRIPTS ───────────────────────────────────────────────── -->
+  <script>
+    // ── Booking Modal ──────────────────────────────────────────────────────
+    const modal = document.getElementById('booking-modal');
+    const panel = document.getElementById('modal-panel');
+
+    function openModal() {
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      panel.classList.remove('translate-y-4');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      panel.classList.add('translate-y-4');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    document.querySelectorAll('[data-book]').forEach(btn => {
+      btn.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
+    });
+
+    // ── Hotel pickup toggle ────────────────────────────────────────
+    function toggleHotel(show) {
+      const box = document.getElementById('hotelBox');
+      box.classList.toggle('hidden', !show);
+    }
+
+    //logout function
+    function logout() {
+      fetch('/user/logout', { method: 'POST' })
+        .then(() => window.location.reload())
+        .catch(err => console.error('Logout failed:', err));
+    }
+
+    // ── Login modal ────────────────────────────────────────────────
+const loginModal = document.getElementById('login-modal');
+const loginPanel = document.getElementById('login-panel');
+
+function openLoginModal() {
+  loginModal.classList.remove('opacity-0', 'pointer-events-none');
+  loginPanel.classList.remove('translate-y-4');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLoginModal() {
+  loginModal.classList.add('opacity-0', 'pointer-events-none');
+  loginPanel.classList.add('translate-y-4');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { closeLoginModal(); }
+});
+
+document.querySelectorAll('[data-login]').forEach(btn => {
+  btn.addEventListener('click', (e) => { e.preventDefault(); openLoginModal(); });
+});
+
+document.querySelectorAll('[data-logout]').forEach(btn => {
+  btn.addEventListener('click', (e) => { e.preventDefault(); logout(); });
+});
+
+    // ── Register modal ────────────────────────────────────────────────
+const registerModal = document.getElementById('register-modal');
+const registerPanel = document.getElementById('register-panel');
+
+function openRegisterModal() {
+  event.preventDefault();
+  closeLoginModal(); // Ensure login modal is closed if open
+  registerModal.classList.remove('opacity-0', 'pointer-events-none');
+  registerPanel.classList.remove('translate-y-4');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeRegisterModal() {
+  registerModal.classList.add('opacity-0', 'pointer-events-none');
+  registerPanel.classList.add('translate-y-4');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { closeRegisterModal(); }
+});
+
+document.querySelectorAll('[data-register]').forEach(btn => {
+  btn.addEventListener('click', (e) => { e.preventDefault(); openRegisterModal(); });
+});
+
+    // ── Mobile nav toggle
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const bar1 = document.getElementById('bar1');
+    const bar2 = document.getElementById('bar2');
+    const bar3 = document.getElementById('bar3');
+    let menuOpen = false;
+
+    hamburger.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      if (menuOpen) {
+        mobileMenu.classList.add('open');
+        bar1.style.transform = 'translateY(6px) rotate(45deg)';
+        bar2.style.opacity   = '0';
+        bar3.style.transform = 'translateY(-6px) rotate(-45deg)';
+        bar3.style.width     = '24px';
+      } else {
+        closeMobileMenu();
+      }
+    });
+
+    function closeMobileMenu() {
+      menuOpen = false;
+      mobileMenu.classList.remove('open');
+      bar1.style.transform = '';
+      bar2.style.opacity   = '1';
+      bar3.style.transform = '';
+      bar3.style.width     = '16px';
+    }
+
+    // Close mobile menu on outside click
+    document.addEventListener('click', (e) => {
+      if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+        closeMobileMenu();
+      }
+    });
+  </script>
+
+</body>
+</html>

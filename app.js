@@ -35,6 +35,11 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  res.locals.user = req.session.user || null; // use customer session
+  next();
+});
+
 app.use(flash());
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null;  // customer session
@@ -69,7 +74,7 @@ const PORT = process.env.PORT || 3000;
 (async () => {
   try {
     await sequelize.authenticate();
-    await sequelize.sync(); // use { force:true } ONLY in development if needed
+    await sequelize.sync({alter: true}); // use { force:true } ONLY in development if needed
 
     console.log("DB connected & synced");
 

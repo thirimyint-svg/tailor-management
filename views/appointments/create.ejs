@@ -1,0 +1,103 @@
+<div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-lg font-bold mb-4">Create Appointment</h2>
+
+    <form method="POST" action="/appointments/create" class="space-y-4">
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Customer Name *</label>
+       <div>
+ 
+
+  <input
+    name="customerName"
+    list="customerList"
+    placeholder="Select or type new customer"
+    class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-gray-900 focus:outline-none"
+    required
+  />
+
+  <datalist id="customerList">
+    <% customers.forEach(c => { %>
+      <option value="<%= c.name %>"></option>
+    <% }) %>
+  </datalist>
+
+  <p class="text-xs text-gray-500 mt-1">
+    You can select existing or type new customer name
+  </p>
+</div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Appointment Date & Time *</label>
+        <input type="datetime-local" name="appointmentAt"
+               class="w-full border rounded px-3 py-2" required />
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input name="email" id="email" type="email" class="w-full border rounded px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">WhatsApp</label>
+         <input name="whatsapp" id="whatsapp" class="w-full border rounded px-3 py-2" />
+        </div>
+      </div>
+
+      <!-- Hotel pickup -->
+      <div>
+        <label class="block text-sm font-medium mb-2">Hotel Pickup?</label>
+        <div class="flex items-center gap-6">
+          <label class="flex items-center gap-2">
+            <input type="radio" name="hotelPickup" value="no" checked class="accent-gray-900"
+                   onchange="toggleHotel(false)" />
+            <span>No</span>
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="radio" name="hotelPickup" value="yes" class="accent-gray-900"
+                   onchange="toggleHotel(true)" />
+            <span>Yes</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Hotel fields -->
+      <div id="hotelBox" class="hidden space-y-3 border rounded p-3 bg-gray-50">
+        <div>
+          <label class="block text-sm font-medium mb-1">Hotel Name</label>
+          <input name="hotelName" class="w-full border rounded px-3 py-2" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Room No</label>
+          <input name="roomNo" class="w-full border rounded px-3 py-2" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Hotel Address</label>
+          <textarea name="hotelAddress" rows="2" class="w-full border rounded px-3 py-2"></textarea>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Notify before</label>
+        <select name="remindBeforeMinutes" class="w-full border rounded px-3 py-2">
+          <option value="60">1 hour before</option>
+          <option value="30">30 minutes before</option>
+          <option value="15">15 minutes before</option>
+          <option value="0">No reminder</option>
+        </select>
+        <p class="text-xs text-gray-500 mt-1">We store this setting now. (Real WhatsApp/email reminders can be added later.)</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Notes</label>
+        <textarea name="notes" rows="4" class="w-full border rounded px-3 py-2"></textarea>
+      </div>
+
+      <button class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800 w-full">
+        Save
+      </button>
+    </form>
+  </div>
