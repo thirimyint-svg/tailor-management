@@ -9,7 +9,7 @@ router.use("/vouchers", require("./voucherRoutes"));
 router.use("/appointments", require("./appointmentRoutes"));
 router.use("/reports", require("./reportRoutes"));
 
-router.get("/", (req, res) => res.redirect("/dashboard"));
+router.get("/", (req, res) => res.render("customerView/main"));
 router.use("/user", require("./userRoutes"));
 router.use("/dev", require("./devRoutes"));
 module.exports = router;

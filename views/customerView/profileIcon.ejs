@@ -1,0 +1,36 @@
+<% if (user) { %>
+  <div class="relative">
+    <button id="profile-btn" class="flex items-center space-x-2 text-ink hover:text-gold transition-colors">
+      <div class="w-8 h-8 bg-gold rounded-full flex items-center justify-center text-white font-semibold">
+        <%= user.name.charAt(0).toUpperCase() %>
+      </div>
+      <span class="hidden sm:block"><%= user.name %></span>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+    </button>
+    <div id="profile-dropdown" class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg hidden z-50">
+      <a href="/user/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+      <a href="/user/bookings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Bookings</a>
+      <form action="/user/logout" method="POST" class="block">
+        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button>
+      </form>
+    </div>
+  </div>
+<% } %>
+
+<script>
+  const profileBtn = document.getElementById('profile-btn');
+  const profileDropdown = document.getElementById('profile-dropdown');
+
+  profileBtn.addEventListener('click', () => {
+    profileDropdown.classList.toggle('hidden');
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+      profileDropdown.classList.add('hidden');
+    }
+  });
+</script>
