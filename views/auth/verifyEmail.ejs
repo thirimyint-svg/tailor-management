@@ -1,0 +1,14 @@
+<%- include ('../partials/customer/tailwindheader')%>
+<body>
+    <div class="flex items-center justify-center h-screen bg-gray-100">
+        <div class="text-center max-w-md">
+            <h2 class="mb-6">Verify Your Email</h2>
+            <p class="mb-4">A verification email has been sent to your email address. Please check your inbox and click the link to verify your account.</p>
+            <p>If you haven't received the email, please check your spam folder or 
+                <form action="/user/resendVerifyEmail/<%= userId %>" method="POST" style="display:inline;">
+                    <button type="submit" class="text-blue-500 underline">resend the verification email</button>
+                </form>
+            .</p>
+        </div>
+    </div>
+</body>

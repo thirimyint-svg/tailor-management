@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= pageTitle || "Order Details" %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold:    { DEFAULT: '#8B6A3E', light: '#B8956A', dark:  '#6B5030' },
+            ink:     { DEFAULT: '#1A1208', mid: '#2E2212',   light: '#3D3020' },
+            parchment: { DEFAULT: '#F5EFE6', mid: '#E8DDD0', dark: '#D4C5B0' },
+            stone:   '#A89880',
+          },
+          fontFamily: {
+            serif:  ['Cormorant Garamond', 'Georgia', 'serif'],
+            sans:   ['Jost', 'sans-serif'],
+          },
+          letterSpacing: {
+            widest2: '0.18em',
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    .status-pending { color: #B8956A; background-color: #F5EFE6; }
+    .status-confirmed { color: #4B7C3C; background-color: #E8F5E1; }
+    .status-completed { color: #1A6B4B; background-color: #D4F0E8; }
+    .status-cancelled { color: #8B4545; background-color: #F5E8E5; }
+  </style>
+</head>
+<body class="bg-parchment font-sans text-ink">
+
+  <!-- Navigation -->
+  <nav class="bg-ink text-parchment p-4">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <a href="/" class="font-serif text-xl tracking-widest">MILANO <span class="text-gold">TAILOR</span></a>
+      <div class="space-x-4 text-sm">
+        <a href="/user/dashboard" class="hover:text-gold">Dashboard</a>
+        <a href="/user/orders" class="hover:text-gold">Orders</a>
+        <a href="/user/profile" class="hover:text-gold">Profile</a>
+        <a href="/user/logout" class="hover:text-gold">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-4xl mx-auto p-6">
+    <div class="mb-8">
+      <a href="/user/orders" class="text-gold hover:text-gold-dark text-sm mb-4 inline-block">← Back to Orders</a>
+      <h1 class="font-serif text-4xl text-ink mb-2"><%= pageTitle %></h1>
+      <p class="text-stone"><%= pageSubTitle %></p>
+    </div>
+
+    <%- include('../partials/flash') %>
+
+    <div class="space-y-6">
+      <!-- Status Card -->
+      <div class="bg-white border border-parchment-dark rounded-lg p-6">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <h2 class="font-serif text-2xl text-ink mb-2">Order Status</h2>
+            <p class="text-sm text-stone">Placed on <%= new Date(order.orderDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+          </div>
+          <span class="px-4 py-2 text-xs tracking-widest uppercase font-medium rounded status-<%= order.status.toLowerCase() %>">
+            <%= order.status %>
+          </span>
+        </div>
+
+        <!-- Status Timeline (simple version) -->
+        <div class="space-y-3 mt-6">
+          <div class="flex items-center">
+            <div class="w-4 h-4 rounded-full bg-gold mr-4"></div>
+            <div class="text-sm text-ink">Order Placed</div>
+          </div>
+          <% if (order.status !== 'Pending' && order.status !== 'Cancelled') { %>
+            <div class="flex items-center">
+              <div class="w-4 h-4 rounded-full bg-gold mr-4"></div>
+              <div class="text-sm text-ink">Order Confirmed</div>
+            </div>
+          <% } %>
+          <% if (order.status === 'Completed') { %>
+            <div class="flex items-center">
+              <div class="w-4 h-4 rounded-full bg-gold mr-4"></div>
+              <div class="text-sm text-ink">Order Completed</div>
+            </div>
+          <% } %>
+          <% if (order.status === 'Cancelled') { %>
+            <div class="flex items-center">
+              <div class="w-4 h-4 rounded-full bg-stone/40 mr-4"></div>
+              <div class="text-sm text-stone">Order Cancelled</div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Items Card -->
+      <div class="bg-white border border-parchment-dark rounded-lg p-6">
+        <h2 class="font-serif text-xl text-ink mb-4">Order Items</h2>
+        
+        <% if (order.OrderItems && order.OrderItems.length > 0) { %>
+          <div class="space-y-4">
+            <% let subtotal = 0; %>
+            <% order.OrderItems.forEach((item) => { %>
+              <% const itemTotal = item.price * item.qty; subtotal += itemTotal; %>
+              <div class="flex justify-between items-center pb-4 border-b border-parchment-dark">
+                <div>
+                  <h3 class="font-medium text-ink mb-1"><%= item.itemName %></h3>
+                  <p class="text-sm text-stone"><%= item.qty %> item<%= item.qty !== 1 ? 's' : '' %> @ <%= item.price.toFixed(2) %> THB each</p>
+                </div>
+                <div class="text-right">
+                  <div class="font-serif text-lg text-gold"><%= itemTotal.toFixed(2) %> THB</div>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+
+          <!-- Summary -->
+          <div class="mt-6 space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-stone">Subtotal</span>
+              <span class="text-ink"><%= subtotal.toFixed(2) %> THB</span>
+            </div>
+            <div class="flex justify-between text-lg border-t border-parchment-dark pt-4">
+              <span class="font-medium text-ink">Total</span>
+              <span class="font-serif text-2xl text-gold"><%= order.totalAmount.toFixed(2) %> THB</span>
+            </div>
+          </div>
+        <% } else { %>
+          <p class="text-sm text-stone">No items in this order.</p>
+        <% } %>
+      </div>
+
+      <!-- Notes Card -->
+      <% if (order.notes) { %>
+        <div class="bg-white border border-parchment-dark rounded-lg p-6">
+          <h2 class="font-serif text-xl text-ink mb-4">Notes</h2>
+          <p class="text-stone"><%= order.notes %></p>
+        </div>
+      <% } %>
+
+      <!-- Actions -->
+      <div class="flex gap-3">
+        <a href="/user/orders" class="px-6 py-2.5 border border-gold text-gold text-xs tracking-widest uppercase hover:bg-gold hover:text-white transition-colors">
+          Back to Orders
+        </a>
+        <% if (order.status.toLowerCase() === 'pending') { %>
+          <button onclick="cancelOrder(<%= order.id %>)" class="px-6 py-2.5 border border-stone text-stone text-xs tracking-widest uppercase hover:bg-stone hover:text-white transition-colors">
+            Cancel Order
+          </button>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function cancelOrder(orderId) {
+      if (confirm('Are you sure you want to cancel this order?')) {
+        fetch(`/user/orders/${orderId}/cancel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            window.location.href = '/user/orders';
+          } else {
+            alert(data.message || 'Failed to cancel order');
+          }
+        })
+        .catch(err => console.error('Error:', err));
+      }
+    }
+  </script>
+
+</body>
+</html>

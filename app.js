@@ -8,6 +8,7 @@ const flash = require("connect-flash");
 const { sequelize } = require("./models");
 const routes = require("./routes");
 const { startReminderJob } = require("./services/reminderService");
+const seedAdmin = require("./db/seed");
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use((req, res, next) => {
   // Current URL (used for active sidebar menu)
   res.locals.currentUrl = req.originalUrl;      // for active menu
   res.locals.user = req.session.user || null;  // customer session
+  res.locals.pendingUserId = req.session.pendingUserId || null; // pending user ID for verification
 
   next();
 });
@@ -74,9 +76,16 @@ const PORT = process.env.PORT || 3000;
 (async () => {
   try {
     await sequelize.authenticate();
-    await sequelize.sync({alter: true}); // use { force:true } ONLY in development if needed
+    await sequelize.sync({ alter: true }); // use { force:true } ONLY in development if needed
 
     console.log("DB connected & synced");
+
+    try {
+      await seedAdmin();
+      console.log("Admin seed checked successfully");
+    } catch (seedErr) {
+      console.error("Error seeding admin user:", seedErr);
+    }
 
     // Start reminder cron job
     startReminderJob();

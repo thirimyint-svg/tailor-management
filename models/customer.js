@@ -10,9 +10,7 @@ module.exports = class Customer extends Model {
         isVerified: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
         verificationToken: { type: DataTypes.STRING },
         address: { type: DataTypes.TEXT },
-        passwordHash: { type: DataTypes.STRING, allowNull: true },
-        isUser: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
-
+        passwordHash: { type: DataTypes.STRING, allowNull: true }
       },
       {
         sequelize,

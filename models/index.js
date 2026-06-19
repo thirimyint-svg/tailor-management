@@ -12,6 +12,7 @@ const db = {};
 
 // Load models
 db.Customer = require("./customer");
+db.Admin = require("./admin");
 db.Order = require("./order");
 db.OrderItem = require("./orderItem");
 db.Fabric = require("./fabric");
@@ -21,6 +22,7 @@ db.Voucher = require("./voucher");
 db.DesignCategory = require("./designCategory");
 
 // Init models
+if (db.Admin.initModel) db.Admin.initModel(sequelize);
 if (db.Customer.initModel) db.Customer.initModel(sequelize);
 if (db.Order.initModel) db.Order.initModel(sequelize);
 if (db.OrderItem.initModel) db.OrderItem.initModel(sequelize);

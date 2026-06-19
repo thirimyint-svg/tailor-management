@@ -3,31 +3,34 @@ const { Customer } = require("../models");
 // LIST PAGE
 exports.list = async (req, res) => {
   try {
-    const customers = await Customer.findAll({
+    const users = await Customer.findAll({
       order: [["id", "DESC"]],
     });
 
-    res.render("customers/list", {
+    res.render("users/list", {
       pageTitle: "Customers",
       pageSubTitle: "Manage customers",
-      customers,
+      users,
+      entityType: "customer"
     });
   } catch (err) {
     console.error("Customer list error:", err);
 
-    res.render("customers/list", {
+    res.render("users/list", {
       pageTitle: "Customers",
       pageSubTitle: "Manage customers",
-      customers: [],
+      users: [],
+      entityType: "customer"
     });
   }
 };
 
 // CREATE PAGE (GET)
 exports.createPage = (req, res) => {
-  res.render("customers/create", {
+  res.render("users/create", {
     pageTitle: "Add Customer",
     pageSubTitle: "Create a new customer",
+    entityType: "customer"
   });
 };
 
@@ -59,32 +62,33 @@ exports.create = async (req, res) => {
 
 // EDIT PAGE
 exports.editPage = async (req, res) => {
-  const customer = await Customer.findByPk(req.params.id);
+  const user = await Customer.findByPk(req.params.id);
 
-  if (!customer) {
+  if (!user) {
     req.flash("error", "Customer not found");
     return res.redirect("/customers");
   }
 
-  res.render("customers/edit", {
+  res.render("users/edit", {
     pageTitle: "Edit Customer",
     pageSubTitle: "Update customer details",
-    customer,
+    user,
+    entityType: "customer"
   });
 };
 
 // UPDATE
 exports.update = async (req, res) => {
-  const customer = await Customer.findByPk(req.params.id);
+  const user = await Customer.findByPk(req.params.id);
 
-  if (!customer) {
+  if (!user) {
     req.flash("error", "Customer not found");
     return res.redirect("/customers");
   }
 
   const { name, phone, email, address } = req.body;
 
-  await customer.update({
+  await user.update({
     name,
     phone,
     email,
@@ -97,14 +101,14 @@ exports.update = async (req, res) => {
 
 // DELETE
 exports.remove = async (req, res) => {
-  const customer = await Customer.findByPk(req.params.id);
+  const user = await Customer.findByPk(req.params.id);
 
-  if (!customer) {
+  if (!user) {
     req.flash("error", "Customer not found");
     return res.redirect("/customers");
   }
 
-  await customer.destroy();
+  await user.destroy();
   req.flash("success", "Customer deleted");
   res.redirect("/customers");
 };

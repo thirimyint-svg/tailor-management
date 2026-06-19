@@ -109,7 +109,7 @@
         Book Now
       </a>
 
-      <% if (user) { %>
+       <% if (user) { %>
         <%- include('./profileIcon') %>
 <% } else { %>
         <a href="/login"
@@ -605,6 +605,8 @@
           <input
             name="customerName"
             placeholder="Enter Your Name"
+            value="<%= user ? user.name : '' %>"
+            readonly
             required
             class="w-full border border-parchment-dark bg-parchment/30 px-4 py-2.5 text-sm text-ink placeholder-stone focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors"
           />

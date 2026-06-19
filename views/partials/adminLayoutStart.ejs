@@ -45,12 +45,13 @@
       var openOrders = isActive("/orders") || isActive("/vouchers");
       var openAppointments = isActive("/appointments");
       var openReports = isActive("/reports");
+      var openUsers = isActive("/customers") || isActive("/admins");
     %>
 
     <nav class="mt-3 px-2 space-y-1">
 
       <!-- Dashboard -->
-      <a href="/dashboard" class="<%= linkCls('/dashboard') %>">
+      <a href="/admin/dashboard" class="<%= linkCls('/dashboard') %>">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M3 12l9-9 9 9v9a2 2 0 01-2 2h-4a2 2 0 01-2-2V12H9v7a2 2 0 01-2 2H3z"/>
@@ -58,14 +59,39 @@
         📊 Dashboard
       </a>
 
-      <!-- Customers -->
-      <a href="/customers" class="<%= linkCls('/customers') %>">
+      <!-- Users -->
+       <button type="button"
+        class="w-full flex items-center justify-between px-4 py-2 rounded hover:bg-gray-800 <%= openInventory ? 'bg-gray-800' : '' %>"
+        onclick="toggleMenu('usrMenu')">
+
+        <div class="flex items-center">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+          </svg>
+          <span>👥</span>Users
+        </div>
+
+        <span class="text-xs opacity-80">▾</span>
+      </button>
+       <div id="usrMenu" class="<%= openUsers ? '' : 'hidden' %> space-y-1">  
+          <a href="/admin/customers" class="<%= linkCls('/customers') %>">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M17 20h5v-2a4 4 0 00-5-4M9 20H4v-2a4 4 0 015-4m4-4a4 4 0 11-8 0 4 4 0 018 0z"/>
         </svg>
         👤 Customers
       </a>
+
+      <a href="/admin/admins" class="<%= linkCls('/admins') %>">
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+        🛡️ Admins
+      </a>
+      </div>
+      
 
       <!-- Inventory Management -->
       <button type="button"
@@ -84,7 +110,7 @@
       </button>
 
       <div id="invMenu" class="<%= openInventory ? '' : 'hidden' %> space-y-1">
-        <a href="/inventory/fabrics" class="<%= subLinkCls('/inventory/fabrics') %>">
+        <a href="/admin/inventory/fabrics" class="<%= subLinkCls('/inventory/fabrics') %>">
           <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 4h16v16H4z"/>
@@ -92,7 +118,7 @@
           Fabric
         </a>
 
-        <a href="/inventory/accessories" class="<%= subLinkCls('/inventory/accessories') %>">
+        <a href="/admin/inventory/accessories" class="<%= subLinkCls('/inventory/accessories') %>">
           <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 3l4 7H8l4-7zM6 21h12"/>
@@ -100,7 +126,7 @@
           Accessories
         </a>
 
-        <a href="/inventory/design-categories" class="<%= subLinkCls('/inventory/design-categories') %>">
+        <a href="/admin/inventory/design-categories" class="<%= subLinkCls('/inventory/design-categories') %>">
           <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 2l4 4-8 8-4 0 0-4 8-8zM14 4l6 6"/>
@@ -126,7 +152,7 @@
       </button>
 
       <div id="orderMenu" class="<%= openOrders ? '' : 'hidden' %> space-y-1">
-        <a href="/orders" class="<%= subLinkCls('/orders') %>">
+        <a href="/admin/orders" class="<%= subLinkCls('/orders') %>">
           <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M9 12h6m-6 4h6M7 6h10a2 2 0 012 2v12H5V8a2 2 0 012-2z"/>
@@ -134,7 +160,7 @@
           Customer Order
         </a>
 
-        <a href="/vouchers" class="<%= subLinkCls('/vouchers') %>">
+        <a href="/admin/vouchers" class="<%= subLinkCls('/vouchers') %>">
           <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 7h16v4a2 2 0 010 4v4H4v-4a2 2 0 010-4V7z"/>
@@ -160,7 +186,7 @@
       </button>
 
       <div id="apptMenu" class="<%= openAppointments ? '' : 'hidden' %> space-y-1">
-        <a href="/appointments" class="<%= subLinkCls('/appointments') %>">
+        <a href="/admin/appointments" class="<%= subLinkCls('/appointments') %>">
           <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M9 5h6M7 9h10M7 13h10M7 17h10"/>
@@ -168,7 +194,7 @@
           Appointment List
         </a>
 
-        <a href="/appointments/calendar/view" class="<%= subLinkCls('/appointments/calendar') %>">
+        <a href="/admin/appointments/calendar/view" class="<%= subLinkCls('/appointments/calendar') %>">
           <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M8 7V3m8 4V3M3 11h18"/>
@@ -194,7 +220,7 @@
       </button>
 
       <div id="reportMenu" class="<%= openReports ? '' : 'hidden' %> space-y-1">
-        <a href="/reports/sales" class="<%= subLinkCls('/reports/sales') %>">
+        <a href="/admin/reports/sales" class="<%= subLinkCls('/reports/sales') %>">
           <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M3 17l6-6 4 4 8-8"/>
@@ -202,7 +228,7 @@
           Sale Report
         </a>
 
-        <a href="/reports/stock" class="<%= subLinkCls('/reports/stock') %>">
+        <a href="/admin/reports/stock" class="<%= subLinkCls('/reports/stock') %>">
           <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 4h16v16H4z"/>
@@ -210,6 +236,16 @@
           Stock Report
         </a>
       </div>
+
+      <!-- Logout -->
+      <a href="/admin/login" class="<%= linkCls('/user/login') %>">
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15 12H3m12 0l-4-4m4 4l-4 4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        🔐 Login
+      </a>
+      
 
     </nav>
   </aside>
