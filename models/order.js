@@ -10,7 +10,7 @@ module.exports = class Order extends Model {
           defaultValue: DataTypes.NOW,
         },
         totalAmount: {
-          type: DataTypes.FLOAT,
+          type: DataTypes.DECIMAL(12, 2),
           allowNull: false,
           defaultValue: 0,
         },

@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 
 const path = require("path");
@@ -29,34 +30,27 @@ app.use(express.static(path.join(__dirname, "public")));
    ======================= */
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "tailor_secret_key",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    },
   })
 );
-
-app.use((req, res, next) => {
-  res.locals.user = req.session.user || null; // use customer session
-  next();
-});
-
-app.use(flash());
-app.use((req, res, next) => {
-  res.locals.user = req.session.user || null;  // customer session
-  next();
-});
 
 /* =======================
    Global View Variables
    ======================= */
+app.use(flash());
+
 app.use((req, res, next) => {
-  // Flash messages
+  res.locals.user = req.session.user || null;
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
-
-  // Current URL (used for active sidebar menu)
-  res.locals.currentUrl = req.originalUrl;      // for active menu
-  res.locals.user = req.session.user || null;  // customer session
+  res.locals.currentUrl = req.originalUrl;
 
   next();
 });
@@ -71,21 +65,29 @@ app.use("/", routes);
    ======================= */
 const PORT = process.env.PORT || 3000;
 
-(async () => {
+async function startServer() {
   try {
+    if (!process.env.SESSION_SECRET) {
+      throw new Error("SESSION_SECRET is missing from .env");
+    }
+
+    // Check PostgreSQL connection only.
+    // Do NOT automatically create or alter tables.
     await sequelize.authenticate();
-    await sequelize.sync({alter: true}); // use { force:true } ONLY in development if needed
 
-    console.log("DB connected & synced");
+    console.log("Supabase PostgreSQL connected successfully!");
 
-    // Start reminder cron job
-    startReminderJob();
-    console.log("Reminder job started ✅");
+    // Reminder job is deliberately disabled
+    // until migration and validation are complete.
+    // startReminderJob();
 
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
     });
   } catch (err) {
-    console.error("DB error:", err);
+    console.error("Database or server startup error:", err);
+    process.exitCode = 1;
   }
-})();
+}
+
+startServer();
